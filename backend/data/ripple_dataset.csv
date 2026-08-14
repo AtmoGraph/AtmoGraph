@@ -1,0 +1,347 @@
+scenario_id,disruption_type,severity,port_id,port_name,manufacturer_id,manufacturer_name,product_route,impact_score,delay_days
+1,PORT_CLOSURE,0.99,PORT003,Rotterdam Port,MAN001,TSMC,Taipei-Rotterdam Route,0.6428,28.93
+1,PORT_CLOSURE,0.99,PORT003,Rotterdam Port,MAN002,Samsung Electronics,Shanghai-Rotterdam Route,0.6535,29.41
+1,PORT_CLOSURE,0.99,PORT003,Rotterdam Port,MAN003,Infineon Technologies,Hamburg-Rotterdam Route,0.4927,22.17
+1,PORT_CLOSURE,0.99,PORT003,Rotterdam Port,MAN004,Foxconn,Shanghai-Rotterdam Route,0.6537,29.42
+2,PORT_STRIKE,0.49,PORT005,Los Angeles Port,MAN001,TSMC,Taipei-Los Angeles Route,0.3313,14.91
+2,PORT_STRIKE,0.49,PORT005,Los Angeles Port,MAN002,Samsung Electronics,Shanghai-Los Angeles Route,0.3198,14.39
+2,PORT_STRIKE,0.49,PORT005,Los Angeles Port,MAN004,Foxconn,Shanghai-Los Angeles Route,0.32,14.4
+3,PORT_CLOSURE,0.99,PORT005,Los Angeles Port,MAN001,TSMC,Taipei-Los Angeles Route,0.6257,28.16
+3,PORT_CLOSURE,0.99,PORT005,Los Angeles Port,MAN002,Samsung Electronics,Shanghai-Los Angeles Route,0.6108,27.49
+3,PORT_CLOSURE,0.99,PORT005,Los Angeles Port,MAN004,Foxconn,Shanghai-Los Angeles Route,0.611,27.5
+4,INFRASTRUCTURE_FAILURE,0.69,PORT003,Rotterdam Port,MAN001,TSMC,Taipei-Rotterdam Route,0.445,20.02
+4,INFRASTRUCTURE_FAILURE,0.69,PORT003,Rotterdam Port,MAN002,Samsung Electronics,Shanghai-Rotterdam Route,0.454,20.43
+4,INFRASTRUCTURE_FAILURE,0.69,PORT003,Rotterdam Port,MAN003,Infineon Technologies,Hamburg-Rotterdam Route,0.3179,14.31
+4,INFRASTRUCTURE_FAILURE,0.69,PORT003,Rotterdam Port,MAN004,Foxconn,Shanghai-Rotterdam Route,0.4542,20.44
+5,INFRASTRUCTURE_FAILURE,0.7,PORT005,Los Angeles Port,MAN001,TSMC,Taipei-Los Angeles Route,0.4337,19.52
+5,INFRASTRUCTURE_FAILURE,0.7,PORT005,Los Angeles Port,MAN002,Samsung Electronics,Shanghai-Los Angeles Route,0.4211,18.95
+5,INFRASTRUCTURE_FAILURE,0.7,PORT005,Los Angeles Port,MAN004,Foxconn,Shanghai-Los Angeles Route,0.4213,18.96
+6,PORT_STRIKE,0.81,PORT003,Rotterdam Port,MAN001,TSMC,Taipei-Rotterdam Route,0.4405,19.82
+6,PORT_STRIKE,0.81,PORT003,Rotterdam Port,MAN002,Samsung Electronics,Shanghai-Rotterdam Route,0.4487,20.19
+6,PORT_STRIKE,0.81,PORT003,Rotterdam Port,MAN003,Infineon Technologies,Hamburg-Rotterdam Route,0.325,14.62
+6,PORT_STRIKE,0.81,PORT003,Rotterdam Port,MAN004,Foxconn,Shanghai-Rotterdam Route,0.4489,20.2
+7,PORT_CLOSURE,0.4,PORT003,Rotterdam Port,MAN001,TSMC,Taipei-Rotterdam Route,0.4128,18.58
+7,PORT_CLOSURE,0.4,PORT003,Rotterdam Port,MAN002,Samsung Electronics,Shanghai-Rotterdam Route,0.4234,19.05
+7,PORT_CLOSURE,0.4,PORT003,Rotterdam Port,MAN003,Infineon Technologies,Hamburg-Rotterdam Route,0.2626,11.82
+7,PORT_CLOSURE,0.4,PORT003,Rotterdam Port,MAN004,Foxconn,Shanghai-Rotterdam Route,0.4236,19.06
+8,PORT_CLOSURE,0.79,PORT003,Rotterdam Port,MAN001,TSMC,Taipei-Rotterdam Route,0.5648,25.42
+8,PORT_CLOSURE,0.79,PORT003,Rotterdam Port,MAN002,Samsung Electronics,Shanghai-Rotterdam Route,0.5755,25.9
+8,PORT_CLOSURE,0.79,PORT003,Rotterdam Port,MAN003,Infineon Technologies,Hamburg-Rotterdam Route,0.4147,18.66
+8,PORT_CLOSURE,0.79,PORT003,Rotterdam Port,MAN004,Foxconn,Shanghai-Rotterdam Route,0.5757,25.91
+9,SEVERE_WEATHER,0.61,PORT005,Los Angeles Port,MAN001,TSMC,Taipei-Los Angeles Route,0.4224,19.01
+9,SEVERE_WEATHER,0.61,PORT005,Los Angeles Port,MAN002,Samsung Electronics,Shanghai-Los Angeles Route,0.4092,18.41
+9,SEVERE_WEATHER,0.61,PORT005,Los Angeles Port,MAN004,Foxconn,Shanghai-Los Angeles Route,0.4094,18.42
+10,PORT_CLOSURE,0.75,PORT003,Rotterdam Port,MAN001,TSMC,Taipei-Rotterdam Route,0.5493,24.72
+10,PORT_CLOSURE,0.75,PORT003,Rotterdam Port,MAN002,Samsung Electronics,Shanghai-Rotterdam Route,0.5599,25.2
+10,PORT_CLOSURE,0.75,PORT003,Rotterdam Port,MAN003,Infineon Technologies,Hamburg-Rotterdam Route,0.3991,17.96
+10,PORT_CLOSURE,0.75,PORT003,Rotterdam Port,MAN004,Foxconn,Shanghai-Rotterdam Route,0.5601,25.2
+11,PORT_STRIKE,0.41,PORT005,Los Angeles Port,MAN001,TSMC,Taipei-Los Angeles Route,0.3073,13.83
+11,PORT_STRIKE,0.41,PORT005,Los Angeles Port,MAN002,Samsung Electronics,Shanghai-Los Angeles Route,0.2958,13.31
+11,PORT_STRIKE,0.41,PORT005,Los Angeles Port,MAN004,Foxconn,Shanghai-Los Angeles Route,0.296,13.32
+12,INFRASTRUCTURE_FAILURE,0.91,PORT005,Los Angeles Port,MAN001,TSMC,Taipei-Los Angeles Route,0.503,22.64
+12,INFRASTRUCTURE_FAILURE,0.91,PORT005,Los Angeles Port,MAN002,Samsung Electronics,Shanghai-Los Angeles Route,0.4904,22.07
+12,INFRASTRUCTURE_FAILURE,0.91,PORT005,Los Angeles Port,MAN004,Foxconn,Shanghai-Los Angeles Route,0.4906,22.08
+13,PORT_STRIKE,0.99,PORT003,Rotterdam Port,MAN001,TSMC,Taipei-Rotterdam Route,0.4945,22.25
+13,PORT_STRIKE,0.99,PORT003,Rotterdam Port,MAN002,Samsung Electronics,Shanghai-Rotterdam Route,0.5027,22.62
+13,PORT_STRIKE,0.99,PORT003,Rotterdam Port,MAN003,Infineon Technologies,Hamburg-Rotterdam Route,0.379,17.05
+13,PORT_STRIKE,0.99,PORT003,Rotterdam Port,MAN004,Foxconn,Shanghai-Rotterdam Route,0.5029,22.63
+14,PORT_STRIKE,0.55,PORT005,Los Angeles Port,MAN001,TSMC,Taipei-Los Angeles Route,0.3493,15.72
+14,PORT_STRIKE,0.55,PORT005,Los Angeles Port,MAN002,Samsung Electronics,Shanghai-Los Angeles Route,0.3378,15.2
+14,PORT_STRIKE,0.55,PORT005,Los Angeles Port,MAN004,Foxconn,Shanghai-Los Angeles Route,0.338,15.21
+15,INFRASTRUCTURE_FAILURE,0.53,PORT003,Rotterdam Port,MAN001,TSMC,Taipei-Rotterdam Route,0.3922,17.65
+15,INFRASTRUCTURE_FAILURE,0.53,PORT003,Rotterdam Port,MAN002,Samsung Electronics,Shanghai-Rotterdam Route,0.4012,18.05
+15,INFRASTRUCTURE_FAILURE,0.53,PORT003,Rotterdam Port,MAN003,Infineon Technologies,Hamburg-Rotterdam Route,0.2651,11.93
+15,INFRASTRUCTURE_FAILURE,0.53,PORT003,Rotterdam Port,MAN004,Foxconn,Shanghai-Rotterdam Route,0.4014,18.06
+16,PORT_CLOSURE,0.9,PORT003,Rotterdam Port,MAN001,TSMC,Taipei-Rotterdam Route,0.6078,27.35
+16,PORT_CLOSURE,0.9,PORT003,Rotterdam Port,MAN002,Samsung Electronics,Shanghai-Rotterdam Route,0.6184,27.83
+16,PORT_CLOSURE,0.9,PORT003,Rotterdam Port,MAN003,Infineon Technologies,Hamburg-Rotterdam Route,0.4576,20.59
+16,PORT_CLOSURE,0.9,PORT003,Rotterdam Port,MAN004,Foxconn,Shanghai-Rotterdam Route,0.6186,27.84
+17,PORT_STRIKE,0.48,PORT003,Rotterdam Port,MAN001,TSMC,Taipei-Rotterdam Route,0.3415,15.37
+17,PORT_STRIKE,0.48,PORT003,Rotterdam Port,MAN002,Samsung Electronics,Shanghai-Rotterdam Route,0.3497,15.74
+17,PORT_STRIKE,0.48,PORT003,Rotterdam Port,MAN003,Infineon Technologies,Hamburg-Rotterdam Route,0.226,10.17
+17,PORT_STRIKE,0.48,PORT003,Rotterdam Port,MAN004,Foxconn,Shanghai-Rotterdam Route,0.3499,15.75
+18,SEVERE_WEATHER,0.45,PORT005,Los Angeles Port,MAN001,TSMC,Taipei-Los Angeles Route,0.3672,16.52
+18,SEVERE_WEATHER,0.45,PORT005,Los Angeles Port,MAN002,Samsung Electronics,Shanghai-Los Angeles Route,0.354,15.93
+18,SEVERE_WEATHER,0.45,PORT005,Los Angeles Port,MAN004,Foxconn,Shanghai-Los Angeles Route,0.3542,15.94
+19,PORT_CLOSURE,0.96,PORT005,Los Angeles Port,MAN001,TSMC,Taipei-Los Angeles Route,0.614,27.63
+19,PORT_CLOSURE,0.96,PORT005,Los Angeles Port,MAN002,Samsung Electronics,Shanghai-Los Angeles Route,0.5991,26.96
+19,PORT_CLOSURE,0.96,PORT005,Los Angeles Port,MAN004,Foxconn,Shanghai-Los Angeles Route,0.5993,26.97
+20,PORT_CLOSURE,0.63,PORT005,Los Angeles Port,MAN001,TSMC,Taipei-Los Angeles Route,0.4853,21.84
+20,PORT_CLOSURE,0.63,PORT005,Los Angeles Port,MAN002,Samsung Electronics,Shanghai-Los Angeles Route,0.4704,21.17
+20,PORT_CLOSURE,0.63,PORT005,Los Angeles Port,MAN004,Foxconn,Shanghai-Los Angeles Route,0.4706,21.18
+21,INFRASTRUCTURE_FAILURE,0.59,PORT003,Rotterdam Port,MAN001,TSMC,Taipei-Rotterdam Route,0.412,18.54
+21,INFRASTRUCTURE_FAILURE,0.59,PORT003,Rotterdam Port,MAN002,Samsung Electronics,Shanghai-Rotterdam Route,0.421,18.95
+21,INFRASTRUCTURE_FAILURE,0.59,PORT003,Rotterdam Port,MAN003,Infineon Technologies,Hamburg-Rotterdam Route,0.2849,12.82
+21,INFRASTRUCTURE_FAILURE,0.59,PORT003,Rotterdam Port,MAN004,Foxconn,Shanghai-Rotterdam Route,0.4212,18.95
+22,SEVERE_WEATHER,0.56,PORT003,Rotterdam Port,MAN001,TSMC,Taipei-Rotterdam Route,0.4203,18.91
+22,SEVERE_WEATHER,0.56,PORT003,Rotterdam Port,MAN002,Samsung Electronics,Shanghai-Rotterdam Route,0.4297,19.34
+22,SEVERE_WEATHER,0.56,PORT003,Rotterdam Port,MAN003,Infineon Technologies,Hamburg-Rotterdam Route,0.2875,12.94
+22,SEVERE_WEATHER,0.56,PORT003,Rotterdam Port,MAN004,Foxconn,Shanghai-Rotterdam Route,0.43,19.35
+23,SEVERE_WEATHER,0.93,PORT005,Los Angeles Port,MAN001,TSMC,Taipei-Los Angeles Route,0.5328,23.98
+23,SEVERE_WEATHER,0.93,PORT005,Los Angeles Port,MAN002,Samsung Electronics,Shanghai-Los Angeles Route,0.5196,23.38
+23,SEVERE_WEATHER,0.93,PORT005,Los Angeles Port,MAN004,Foxconn,Shanghai-Los Angeles Route,0.5198,23.39
+24,PORT_STRIKE,0.79,PORT005,Los Angeles Port,MAN001,TSMC,Taipei-Los Angeles Route,0.4213,18.96
+24,PORT_STRIKE,0.79,PORT005,Los Angeles Port,MAN002,Samsung Electronics,Shanghai-Los Angeles Route,0.4098,18.44
+24,PORT_STRIKE,0.79,PORT005,Los Angeles Port,MAN004,Foxconn,Shanghai-Los Angeles Route,0.41,18.45
+25,INFRASTRUCTURE_FAILURE,0.77,PORT005,Los Angeles Port,MAN001,TSMC,Taipei-Los Angeles Route,0.4568,20.56
+25,INFRASTRUCTURE_FAILURE,0.77,PORT005,Los Angeles Port,MAN002,Samsung Electronics,Shanghai-Los Angeles Route,0.4442,19.99
+25,INFRASTRUCTURE_FAILURE,0.77,PORT005,Los Angeles Port,MAN004,Foxconn,Shanghai-Los Angeles Route,0.4444,20.0
+26,PORT_CLOSURE,0.54,PORT005,Los Angeles Port,MAN001,TSMC,Taipei-Los Angeles Route,0.4502,20.26
+26,PORT_CLOSURE,0.54,PORT005,Los Angeles Port,MAN002,Samsung Electronics,Shanghai-Los Angeles Route,0.4353,19.59
+26,PORT_CLOSURE,0.54,PORT005,Los Angeles Port,MAN004,Foxconn,Shanghai-Los Angeles Route,0.4355,19.6
+27,PORT_STRIKE,0.57,PORT005,Los Angeles Port,MAN001,TSMC,Taipei-Los Angeles Route,0.3553,15.99
+27,PORT_STRIKE,0.57,PORT005,Los Angeles Port,MAN002,Samsung Electronics,Shanghai-Los Angeles Route,0.3438,15.47
+27,PORT_STRIKE,0.57,PORT005,Los Angeles Port,MAN004,Foxconn,Shanghai-Los Angeles Route,0.344,15.48
+28,PORT_CLOSURE,0.48,PORT003,Rotterdam Port,MAN001,TSMC,Taipei-Rotterdam Route,0.444,19.98
+28,PORT_CLOSURE,0.48,PORT003,Rotterdam Port,MAN002,Samsung Electronics,Shanghai-Rotterdam Route,0.4546,20.46
+28,PORT_CLOSURE,0.48,PORT003,Rotterdam Port,MAN003,Infineon Technologies,Hamburg-Rotterdam Route,0.2938,13.22
+28,PORT_CLOSURE,0.48,PORT003,Rotterdam Port,MAN004,Foxconn,Shanghai-Rotterdam Route,0.4548,20.47
+29,INFRASTRUCTURE_FAILURE,0.75,PORT003,Rotterdam Port,MAN001,TSMC,Taipei-Rotterdam Route,0.4647,20.91
+29,INFRASTRUCTURE_FAILURE,0.75,PORT003,Rotterdam Port,MAN002,Samsung Electronics,Shanghai-Rotterdam Route,0.4738,21.32
+29,INFRASTRUCTURE_FAILURE,0.75,PORT003,Rotterdam Port,MAN003,Infineon Technologies,Hamburg-Rotterdam Route,0.3377,15.2
+29,INFRASTRUCTURE_FAILURE,0.75,PORT003,Rotterdam Port,MAN004,Foxconn,Shanghai-Rotterdam Route,0.474,21.33
+30,PORT_CLOSURE,0.41,PORT005,Los Angeles Port,MAN001,TSMC,Taipei-Los Angeles Route,0.3995,17.98
+30,PORT_CLOSURE,0.41,PORT005,Los Angeles Port,MAN002,Samsung Electronics,Shanghai-Los Angeles Route,0.3846,17.31
+30,PORT_CLOSURE,0.41,PORT005,Los Angeles Port,MAN004,Foxconn,Shanghai-Los Angeles Route,0.3848,17.32
+31,PORT_STRIKE,0.51,PORT005,Los Angeles Port,MAN001,TSMC,Taipei-Los Angeles Route,0.3373,15.18
+31,PORT_STRIKE,0.51,PORT005,Los Angeles Port,MAN002,Samsung Electronics,Shanghai-Los Angeles Route,0.3258,14.66
+31,PORT_STRIKE,0.51,PORT005,Los Angeles Port,MAN004,Foxconn,Shanghai-Los Angeles Route,0.326,14.67
+32,PORT_CLOSURE,0.93,PORT003,Rotterdam Port,MAN001,TSMC,Taipei-Rotterdam Route,0.6195,27.88
+32,PORT_CLOSURE,0.93,PORT003,Rotterdam Port,MAN002,Samsung Electronics,Shanghai-Rotterdam Route,0.6301,28.35
+32,PORT_CLOSURE,0.93,PORT003,Rotterdam Port,MAN003,Infineon Technologies,Hamburg-Rotterdam Route,0.4693,21.12
+32,PORT_CLOSURE,0.93,PORT003,Rotterdam Port,MAN004,Foxconn,Shanghai-Rotterdam Route,0.6303,28.36
+33,INFRASTRUCTURE_FAILURE,0.46,PORT005,Los Angeles Port,MAN001,TSMC,Taipei-Los Angeles Route,0.3545,15.95
+33,INFRASTRUCTURE_FAILURE,0.46,PORT005,Los Angeles Port,MAN002,Samsung Electronics,Shanghai-Los Angeles Route,0.3419,15.39
+33,INFRASTRUCTURE_FAILURE,0.46,PORT005,Los Angeles Port,MAN004,Foxconn,Shanghai-Los Angeles Route,0.3421,15.39
+34,PORT_CLOSURE,0.45,PORT003,Rotterdam Port,MAN001,TSMC,Taipei-Rotterdam Route,0.4323,19.45
+34,PORT_CLOSURE,0.45,PORT003,Rotterdam Port,MAN002,Samsung Electronics,Shanghai-Rotterdam Route,0.4429,19.93
+34,PORT_CLOSURE,0.45,PORT003,Rotterdam Port,MAN003,Infineon Technologies,Hamburg-Rotterdam Route,0.2821,12.69
+34,PORT_CLOSURE,0.45,PORT003,Rotterdam Port,MAN004,Foxconn,Shanghai-Rotterdam Route,0.4431,19.94
+35,PORT_STRIKE,0.61,PORT003,Rotterdam Port,MAN001,TSMC,Taipei-Rotterdam Route,0.3805,17.12
+35,PORT_STRIKE,0.61,PORT003,Rotterdam Port,MAN002,Samsung Electronics,Shanghai-Rotterdam Route,0.3887,17.49
+35,PORT_STRIKE,0.61,PORT003,Rotterdam Port,MAN003,Infineon Technologies,Hamburg-Rotterdam Route,0.265,11.93
+35,PORT_STRIKE,0.61,PORT003,Rotterdam Port,MAN004,Foxconn,Shanghai-Rotterdam Route,0.3889,17.5
+36,INFRASTRUCTURE_FAILURE,0.98,PORT005,Los Angeles Port,MAN001,TSMC,Taipei-Los Angeles Route,0.5261,23.67
+36,INFRASTRUCTURE_FAILURE,0.98,PORT005,Los Angeles Port,MAN002,Samsung Electronics,Shanghai-Los Angeles Route,0.5135,23.11
+36,INFRASTRUCTURE_FAILURE,0.98,PORT005,Los Angeles Port,MAN004,Foxconn,Shanghai-Los Angeles Route,0.5137,23.12
+37,INFRASTRUCTURE_FAILURE,0.61,PORT003,Rotterdam Port,MAN001,TSMC,Taipei-Rotterdam Route,0.4186,18.84
+37,INFRASTRUCTURE_FAILURE,0.61,PORT003,Rotterdam Port,MAN002,Samsung Electronics,Shanghai-Rotterdam Route,0.4276,19.24
+37,INFRASTRUCTURE_FAILURE,0.61,PORT003,Rotterdam Port,MAN003,Infineon Technologies,Hamburg-Rotterdam Route,0.2915,13.12
+37,INFRASTRUCTURE_FAILURE,0.61,PORT003,Rotterdam Port,MAN004,Foxconn,Shanghai-Rotterdam Route,0.4278,19.25
+38,PORT_CLOSURE,0.57,PORT005,Los Angeles Port,MAN001,TSMC,Taipei-Los Angeles Route,0.4619,20.79
+38,PORT_CLOSURE,0.57,PORT005,Los Angeles Port,MAN002,Samsung Electronics,Shanghai-Los Angeles Route,0.447,20.12
+38,PORT_CLOSURE,0.57,PORT005,Los Angeles Port,MAN004,Foxconn,Shanghai-Los Angeles Route,0.4472,20.12
+39,PORT_CLOSURE,0.42,PORT003,Rotterdam Port,MAN001,TSMC,Taipei-Rotterdam Route,0.4206,18.93
+39,PORT_CLOSURE,0.42,PORT003,Rotterdam Port,MAN002,Samsung Electronics,Shanghai-Rotterdam Route,0.4312,19.4
+39,PORT_CLOSURE,0.42,PORT003,Rotterdam Port,MAN003,Infineon Technologies,Hamburg-Rotterdam Route,0.2704,12.17
+39,PORT_CLOSURE,0.42,PORT003,Rotterdam Port,MAN004,Foxconn,Shanghai-Rotterdam Route,0.4314,19.41
+40,PORT_STRIKE,0.46,PORT003,Rotterdam Port,MAN001,TSMC,Taipei-Rotterdam Route,0.3355,15.1
+40,PORT_STRIKE,0.46,PORT003,Rotterdam Port,MAN002,Samsung Electronics,Shanghai-Rotterdam Route,0.3437,15.47
+40,PORT_STRIKE,0.46,PORT003,Rotterdam Port,MAN003,Infineon Technologies,Hamburg-Rotterdam Route,0.22,9.9
+40,PORT_STRIKE,0.46,PORT003,Rotterdam Port,MAN004,Foxconn,Shanghai-Rotterdam Route,0.3439,15.48
+41,PORT_STRIKE,0.77,PORT005,Los Angeles Port,MAN001,TSMC,Taipei-Los Angeles Route,0.4153,18.69
+41,PORT_STRIKE,0.77,PORT005,Los Angeles Port,MAN002,Samsung Electronics,Shanghai-Los Angeles Route,0.4038,18.17
+41,PORT_STRIKE,0.77,PORT005,Los Angeles Port,MAN004,Foxconn,Shanghai-Los Angeles Route,0.404,18.18
+42,INFRASTRUCTURE_FAILURE,0.51,PORT005,Los Angeles Port,MAN001,TSMC,Taipei-Los Angeles Route,0.371,16.7
+42,INFRASTRUCTURE_FAILURE,0.51,PORT005,Los Angeles Port,MAN002,Samsung Electronics,Shanghai-Los Angeles Route,0.3584,16.13
+42,INFRASTRUCTURE_FAILURE,0.51,PORT005,Los Angeles Port,MAN004,Foxconn,Shanghai-Los Angeles Route,0.3586,16.14
+43,SEVERE_WEATHER,0.66,PORT005,Los Angeles Port,MAN001,TSMC,Taipei-Los Angeles Route,0.4396,19.78
+43,SEVERE_WEATHER,0.66,PORT005,Los Angeles Port,MAN002,Samsung Electronics,Shanghai-Los Angeles Route,0.4265,19.19
+43,SEVERE_WEATHER,0.66,PORT005,Los Angeles Port,MAN004,Foxconn,Shanghai-Los Angeles Route,0.4267,19.2
+44,PORT_STRIKE,0.76,PORT003,Rotterdam Port,MAN001,TSMC,Taipei-Rotterdam Route,0.4255,19.15
+44,PORT_STRIKE,0.76,PORT003,Rotterdam Port,MAN002,Samsung Electronics,Shanghai-Rotterdam Route,0.4337,19.52
+44,PORT_STRIKE,0.76,PORT003,Rotterdam Port,MAN003,Infineon Technologies,Hamburg-Rotterdam Route,0.31,13.95
+44,PORT_STRIKE,0.76,PORT003,Rotterdam Port,MAN004,Foxconn,Shanghai-Rotterdam Route,0.4339,19.53
+45,PORT_STRIKE,0.81,PORT003,Rotterdam Port,MAN001,TSMC,Taipei-Rotterdam Route,0.4405,19.82
+45,PORT_STRIKE,0.81,PORT003,Rotterdam Port,MAN002,Samsung Electronics,Shanghai-Rotterdam Route,0.4487,20.19
+45,PORT_STRIKE,0.81,PORT003,Rotterdam Port,MAN003,Infineon Technologies,Hamburg-Rotterdam Route,0.325,14.62
+45,PORT_STRIKE,0.81,PORT003,Rotterdam Port,MAN004,Foxconn,Shanghai-Rotterdam Route,0.4489,20.2
+46,INFRASTRUCTURE_FAILURE,0.69,PORT003,Rotterdam Port,MAN001,TSMC,Taipei-Rotterdam Route,0.445,20.02
+46,INFRASTRUCTURE_FAILURE,0.69,PORT003,Rotterdam Port,MAN002,Samsung Electronics,Shanghai-Rotterdam Route,0.454,20.43
+46,INFRASTRUCTURE_FAILURE,0.69,PORT003,Rotterdam Port,MAN003,Infineon Technologies,Hamburg-Rotterdam Route,0.3179,14.31
+46,INFRASTRUCTURE_FAILURE,0.69,PORT003,Rotterdam Port,MAN004,Foxconn,Shanghai-Rotterdam Route,0.4542,20.44
+47,INFRASTRUCTURE_FAILURE,0.49,PORT005,Los Angeles Port,MAN001,TSMC,Taipei-Los Angeles Route,0.3644,16.4
+47,INFRASTRUCTURE_FAILURE,0.49,PORT005,Los Angeles Port,MAN002,Samsung Electronics,Shanghai-Los Angeles Route,0.3518,15.83
+47,INFRASTRUCTURE_FAILURE,0.49,PORT005,Los Angeles Port,MAN004,Foxconn,Shanghai-Los Angeles Route,0.352,15.84
+48,SEVERE_WEATHER,0.72,PORT003,Rotterdam Port,MAN001,TSMC,Taipei-Rotterdam Route,0.4755,21.4
+48,SEVERE_WEATHER,0.72,PORT003,Rotterdam Port,MAN002,Samsung Electronics,Shanghai-Rotterdam Route,0.4849,21.82
+48,SEVERE_WEATHER,0.72,PORT003,Rotterdam Port,MAN003,Infineon Technologies,Hamburg-Rotterdam Route,0.3427,15.42
+48,SEVERE_WEATHER,0.72,PORT003,Rotterdam Port,MAN004,Foxconn,Shanghai-Rotterdam Route,0.4852,21.83
+49,INFRASTRUCTURE_FAILURE,0.9,PORT003,Rotterdam Port,MAN001,TSMC,Taipei-Rotterdam Route,0.5143,23.14
+49,INFRASTRUCTURE_FAILURE,0.9,PORT003,Rotterdam Port,MAN002,Samsung Electronics,Shanghai-Rotterdam Route,0.5233,23.55
+49,INFRASTRUCTURE_FAILURE,0.9,PORT003,Rotterdam Port,MAN003,Infineon Technologies,Hamburg-Rotterdam Route,0.3872,17.42
+49,INFRASTRUCTURE_FAILURE,0.9,PORT003,Rotterdam Port,MAN004,Foxconn,Shanghai-Rotterdam Route,0.5235,23.56
+50,PORT_CLOSURE,0.69,PORT003,Rotterdam Port,MAN001,TSMC,Taipei-Rotterdam Route,0.5258,23.66
+50,PORT_CLOSURE,0.69,PORT003,Rotterdam Port,MAN002,Samsung Electronics,Shanghai-Rotterdam Route,0.5365,24.14
+50,PORT_CLOSURE,0.69,PORT003,Rotterdam Port,MAN003,Infineon Technologies,Hamburg-Rotterdam Route,0.3757,16.91
+50,PORT_CLOSURE,0.69,PORT003,Rotterdam Port,MAN004,Foxconn,Shanghai-Rotterdam Route,0.5367,24.15
+51,PORT_STRIKE,0.9,PORT005,Los Angeles Port,MAN001,TSMC,Taipei-Los Angeles Route,0.4543,20.44
+51,PORT_STRIKE,0.9,PORT005,Los Angeles Port,MAN002,Samsung Electronics,Shanghai-Los Angeles Route,0.4428,19.93
+51,PORT_STRIKE,0.9,PORT005,Los Angeles Port,MAN004,Foxconn,Shanghai-Los Angeles Route,0.443,19.93
+52,PORT_CLOSURE,0.84,PORT005,Los Angeles Port,MAN001,TSMC,Taipei-Los Angeles Route,0.5672,25.52
+52,PORT_CLOSURE,0.84,PORT005,Los Angeles Port,MAN002,Samsung Electronics,Shanghai-Los Angeles Route,0.5523,24.85
+52,PORT_CLOSURE,0.84,PORT005,Los Angeles Port,MAN004,Foxconn,Shanghai-Los Angeles Route,0.5525,24.86
+53,PORT_STRIKE,0.47,PORT005,Los Angeles Port,MAN001,TSMC,Taipei-Los Angeles Route,0.3253,14.64
+53,PORT_STRIKE,0.47,PORT005,Los Angeles Port,MAN002,Samsung Electronics,Shanghai-Los Angeles Route,0.3138,14.12
+53,PORT_STRIKE,0.47,PORT005,Los Angeles Port,MAN004,Foxconn,Shanghai-Los Angeles Route,0.314,14.13
+54,PORT_STRIKE,0.94,PORT005,Los Angeles Port,MAN001,TSMC,Taipei-Los Angeles Route,0.4663,20.98
+54,PORT_STRIKE,0.94,PORT005,Los Angeles Port,MAN002,Samsung Electronics,Shanghai-Los Angeles Route,0.4548,20.47
+54,PORT_STRIKE,0.94,PORT005,Los Angeles Port,MAN004,Foxconn,Shanghai-Los Angeles Route,0.455,20.48
+55,INFRASTRUCTURE_FAILURE,0.46,PORT003,Rotterdam Port,MAN001,TSMC,Taipei-Rotterdam Route,0.3691,16.61
+55,INFRASTRUCTURE_FAILURE,0.46,PORT003,Rotterdam Port,MAN002,Samsung Electronics,Shanghai-Rotterdam Route,0.3781,17.01
+55,INFRASTRUCTURE_FAILURE,0.46,PORT003,Rotterdam Port,MAN003,Infineon Technologies,Hamburg-Rotterdam Route,0.242,10.89
+55,INFRASTRUCTURE_FAILURE,0.46,PORT003,Rotterdam Port,MAN004,Foxconn,Shanghai-Rotterdam Route,0.3783,17.02
+56,PORT_CLOSURE,0.44,PORT005,Los Angeles Port,MAN001,TSMC,Taipei-Los Angeles Route,0.4112,18.5
+56,PORT_CLOSURE,0.44,PORT005,Los Angeles Port,MAN002,Samsung Electronics,Shanghai-Los Angeles Route,0.3963,17.83
+56,PORT_CLOSURE,0.44,PORT005,Los Angeles Port,MAN004,Foxconn,Shanghai-Los Angeles Route,0.3965,17.84
+57,PORT_CLOSURE,0.87,PORT005,Los Angeles Port,MAN001,TSMC,Taipei-Los Angeles Route,0.5789,26.05
+57,PORT_CLOSURE,0.87,PORT005,Los Angeles Port,MAN002,Samsung Electronics,Shanghai-Los Angeles Route,0.564,25.38
+57,PORT_CLOSURE,0.87,PORT005,Los Angeles Port,MAN004,Foxconn,Shanghai-Los Angeles Route,0.5642,25.39
+58,SEVERE_WEATHER,0.49,PORT003,Rotterdam Port,MAN001,TSMC,Taipei-Rotterdam Route,0.3962,17.83
+58,SEVERE_WEATHER,0.49,PORT003,Rotterdam Port,MAN002,Samsung Electronics,Shanghai-Rotterdam Route,0.4056,18.25
+58,SEVERE_WEATHER,0.49,PORT003,Rotterdam Port,MAN003,Infineon Technologies,Hamburg-Rotterdam Route,0.2633,11.85
+58,SEVERE_WEATHER,0.49,PORT003,Rotterdam Port,MAN004,Foxconn,Shanghai-Rotterdam Route,0.4058,18.26
+59,SEVERE_WEATHER,0.45,PORT003,Rotterdam Port,MAN001,TSMC,Taipei-Rotterdam Route,0.3824,17.21
+59,SEVERE_WEATHER,0.45,PORT003,Rotterdam Port,MAN002,Samsung Electronics,Shanghai-Rotterdam Route,0.3918,17.63
+59,SEVERE_WEATHER,0.45,PORT003,Rotterdam Port,MAN003,Infineon Technologies,Hamburg-Rotterdam Route,0.2496,11.23
+59,SEVERE_WEATHER,0.45,PORT003,Rotterdam Port,MAN004,Foxconn,Shanghai-Rotterdam Route,0.392,17.64
+60,PORT_STRIKE,0.53,PORT003,Rotterdam Port,MAN001,TSMC,Taipei-Rotterdam Route,0.3565,16.04
+60,PORT_STRIKE,0.53,PORT003,Rotterdam Port,MAN002,Samsung Electronics,Shanghai-Rotterdam Route,0.3647,16.41
+60,PORT_STRIKE,0.53,PORT003,Rotterdam Port,MAN003,Infineon Technologies,Hamburg-Rotterdam Route,0.241,10.84
+60,PORT_STRIKE,0.53,PORT003,Rotterdam Port,MAN004,Foxconn,Shanghai-Rotterdam Route,0.3649,16.42
+61,PORT_STRIKE,0.9,PORT005,Los Angeles Port,MAN001,TSMC,Taipei-Los Angeles Route,0.4543,20.44
+61,PORT_STRIKE,0.9,PORT005,Los Angeles Port,MAN002,Samsung Electronics,Shanghai-Los Angeles Route,0.4428,19.93
+61,PORT_STRIKE,0.9,PORT005,Los Angeles Port,MAN004,Foxconn,Shanghai-Los Angeles Route,0.443,19.93
+62,INFRASTRUCTURE_FAILURE,0.78,PORT005,Los Angeles Port,MAN001,TSMC,Taipei-Los Angeles Route,0.4601,20.7
+62,INFRASTRUCTURE_FAILURE,0.78,PORT005,Los Angeles Port,MAN002,Samsung Electronics,Shanghai-Los Angeles Route,0.4475,20.14
+62,INFRASTRUCTURE_FAILURE,0.78,PORT005,Los Angeles Port,MAN004,Foxconn,Shanghai-Los Angeles Route,0.4477,20.15
+63,INFRASTRUCTURE_FAILURE,0.48,PORT005,Los Angeles Port,MAN001,TSMC,Taipei-Los Angeles Route,0.3611,16.25
+63,INFRASTRUCTURE_FAILURE,0.48,PORT005,Los Angeles Port,MAN002,Samsung Electronics,Shanghai-Los Angeles Route,0.3485,15.68
+63,INFRASTRUCTURE_FAILURE,0.48,PORT005,Los Angeles Port,MAN004,Foxconn,Shanghai-Los Angeles Route,0.3487,15.69
+64,PORT_STRIKE,0.56,PORT005,Los Angeles Port,MAN001,TSMC,Taipei-Los Angeles Route,0.3523,15.85
+64,PORT_STRIKE,0.56,PORT005,Los Angeles Port,MAN002,Samsung Electronics,Shanghai-Los Angeles Route,0.3408,15.34
+64,PORT_STRIKE,0.56,PORT005,Los Angeles Port,MAN004,Foxconn,Shanghai-Los Angeles Route,0.341,15.35
+65,PORT_CLOSURE,0.68,PORT003,Rotterdam Port,MAN001,TSMC,Taipei-Rotterdam Route,0.522,23.49
+65,PORT_CLOSURE,0.68,PORT003,Rotterdam Port,MAN002,Samsung Electronics,Shanghai-Rotterdam Route,0.5326,23.97
+65,PORT_CLOSURE,0.68,PORT003,Rotterdam Port,MAN003,Infineon Technologies,Hamburg-Rotterdam Route,0.3718,16.73
+65,PORT_CLOSURE,0.68,PORT003,Rotterdam Port,MAN004,Foxconn,Shanghai-Rotterdam Route,0.5328,23.98
+66,PORT_CLOSURE,0.9,PORT005,Los Angeles Port,MAN001,TSMC,Taipei-Los Angeles Route,0.5906,26.58
+66,PORT_CLOSURE,0.9,PORT005,Los Angeles Port,MAN002,Samsung Electronics,Shanghai-Los Angeles Route,0.5757,25.91
+66,PORT_CLOSURE,0.9,PORT005,Los Angeles Port,MAN004,Foxconn,Shanghai-Los Angeles Route,0.5759,25.92
+67,PORT_CLOSURE,0.7,PORT003,Rotterdam Port,MAN001,TSMC,Taipei-Rotterdam Route,0.5297,23.84
+67,PORT_CLOSURE,0.7,PORT003,Rotterdam Port,MAN002,Samsung Electronics,Shanghai-Rotterdam Route,0.5404,24.32
+67,PORT_CLOSURE,0.7,PORT003,Rotterdam Port,MAN003,Infineon Technologies,Hamburg-Rotterdam Route,0.3796,17.08
+67,PORT_CLOSURE,0.7,PORT003,Rotterdam Port,MAN004,Foxconn,Shanghai-Rotterdam Route,0.5406,24.33
+68,PORT_CLOSURE,0.58,PORT003,Rotterdam Port,MAN001,TSMC,Taipei-Rotterdam Route,0.4829,21.73
+68,PORT_CLOSURE,0.58,PORT003,Rotterdam Port,MAN002,Samsung Electronics,Shanghai-Rotterdam Route,0.4936,22.21
+68,PORT_CLOSURE,0.58,PORT003,Rotterdam Port,MAN003,Infineon Technologies,Hamburg-Rotterdam Route,0.3328,14.98
+68,PORT_CLOSURE,0.58,PORT003,Rotterdam Port,MAN004,Foxconn,Shanghai-Rotterdam Route,0.4938,22.22
+69,PORT_CLOSURE,0.46,PORT003,Rotterdam Port,MAN001,TSMC,Taipei-Rotterdam Route,0.4362,19.63
+69,PORT_CLOSURE,0.46,PORT003,Rotterdam Port,MAN002,Samsung Electronics,Shanghai-Rotterdam Route,0.4468,20.11
+69,PORT_CLOSURE,0.46,PORT003,Rotterdam Port,MAN003,Infineon Technologies,Hamburg-Rotterdam Route,0.286,12.87
+69,PORT_CLOSURE,0.46,PORT003,Rotterdam Port,MAN004,Foxconn,Shanghai-Rotterdam Route,0.447,20.12
+70,SEVERE_WEATHER,0.46,PORT005,Los Angeles Port,MAN001,TSMC,Taipei-Los Angeles Route,0.3706,16.68
+70,SEVERE_WEATHER,0.46,PORT005,Los Angeles Port,MAN002,Samsung Electronics,Shanghai-Los Angeles Route,0.3575,16.09
+70,SEVERE_WEATHER,0.46,PORT005,Los Angeles Port,MAN004,Foxconn,Shanghai-Los Angeles Route,0.3576,16.09
+71,PORT_STRIKE,0.44,PORT005,Los Angeles Port,MAN001,TSMC,Taipei-Los Angeles Route,0.3163,14.23
+71,PORT_STRIKE,0.44,PORT005,Los Angeles Port,MAN002,Samsung Electronics,Shanghai-Los Angeles Route,0.3048,13.72
+71,PORT_STRIKE,0.44,PORT005,Los Angeles Port,MAN004,Foxconn,Shanghai-Los Angeles Route,0.305,13.72
+72,SEVERE_WEATHER,0.49,PORT003,Rotterdam Port,MAN001,TSMC,Taipei-Rotterdam Route,0.3962,17.83
+72,SEVERE_WEATHER,0.49,PORT003,Rotterdam Port,MAN002,Samsung Electronics,Shanghai-Rotterdam Route,0.4056,18.25
+72,SEVERE_WEATHER,0.49,PORT003,Rotterdam Port,MAN003,Infineon Technologies,Hamburg-Rotterdam Route,0.2633,11.85
+72,SEVERE_WEATHER,0.49,PORT003,Rotterdam Port,MAN004,Foxconn,Shanghai-Rotterdam Route,0.4058,18.26
+73,SEVERE_WEATHER,0.93,PORT005,Los Angeles Port,MAN001,TSMC,Taipei-Los Angeles Route,0.5328,23.98
+73,SEVERE_WEATHER,0.93,PORT005,Los Angeles Port,MAN002,Samsung Electronics,Shanghai-Los Angeles Route,0.5196,23.38
+73,SEVERE_WEATHER,0.93,PORT005,Los Angeles Port,MAN004,Foxconn,Shanghai-Los Angeles Route,0.5198,23.39
+74,INFRASTRUCTURE_FAILURE,0.76,PORT005,Los Angeles Port,MAN001,TSMC,Taipei-Los Angeles Route,0.4535,20.41
+74,INFRASTRUCTURE_FAILURE,0.76,PORT005,Los Angeles Port,MAN002,Samsung Electronics,Shanghai-Los Angeles Route,0.4409,19.84
+74,INFRASTRUCTURE_FAILURE,0.76,PORT005,Los Angeles Port,MAN004,Foxconn,Shanghai-Los Angeles Route,0.4411,19.85
+75,INFRASTRUCTURE_FAILURE,0.82,PORT003,Rotterdam Port,MAN001,TSMC,Taipei-Rotterdam Route,0.4879,21.96
+75,INFRASTRUCTURE_FAILURE,0.82,PORT003,Rotterdam Port,MAN002,Samsung Electronics,Shanghai-Rotterdam Route,0.4969,22.36
+75,INFRASTRUCTURE_FAILURE,0.82,PORT003,Rotterdam Port,MAN003,Infineon Technologies,Hamburg-Rotterdam Route,0.3608,16.24
+75,INFRASTRUCTURE_FAILURE,0.82,PORT003,Rotterdam Port,MAN004,Foxconn,Shanghai-Rotterdam Route,0.4971,22.37
+76,SEVERE_WEATHER,0.63,PORT003,Rotterdam Port,MAN001,TSMC,Taipei-Rotterdam Route,0.4445,20.0
+76,SEVERE_WEATHER,0.63,PORT003,Rotterdam Port,MAN002,Samsung Electronics,Shanghai-Rotterdam Route,0.4539,20.43
+76,SEVERE_WEATHER,0.63,PORT003,Rotterdam Port,MAN003,Infineon Technologies,Hamburg-Rotterdam Route,0.3116,14.02
+76,SEVERE_WEATHER,0.63,PORT003,Rotterdam Port,MAN004,Foxconn,Shanghai-Rotterdam Route,0.4541,20.43
+77,SEVERE_WEATHER,0.61,PORT003,Rotterdam Port,MAN001,TSMC,Taipei-Rotterdam Route,0.4376,19.69
+77,SEVERE_WEATHER,0.61,PORT003,Rotterdam Port,MAN002,Samsung Electronics,Shanghai-Rotterdam Route,0.447,20.12
+77,SEVERE_WEATHER,0.61,PORT003,Rotterdam Port,MAN003,Infineon Technologies,Hamburg-Rotterdam Route,0.3047,13.71
+77,SEVERE_WEATHER,0.61,PORT003,Rotterdam Port,MAN004,Foxconn,Shanghai-Rotterdam Route,0.4472,20.12
+78,INFRASTRUCTURE_FAILURE,0.72,PORT003,Rotterdam Port,MAN001,TSMC,Taipei-Rotterdam Route,0.4549,20.47
+78,INFRASTRUCTURE_FAILURE,0.72,PORT003,Rotterdam Port,MAN002,Samsung Electronics,Shanghai-Rotterdam Route,0.4639,20.88
+78,INFRASTRUCTURE_FAILURE,0.72,PORT003,Rotterdam Port,MAN003,Infineon Technologies,Hamburg-Rotterdam Route,0.3278,14.75
+78,INFRASTRUCTURE_FAILURE,0.72,PORT003,Rotterdam Port,MAN004,Foxconn,Shanghai-Rotterdam Route,0.4641,20.88
+79,INFRASTRUCTURE_FAILURE,0.73,PORT003,Rotterdam Port,MAN001,TSMC,Taipei-Rotterdam Route,0.4582,20.62
+79,INFRASTRUCTURE_FAILURE,0.73,PORT003,Rotterdam Port,MAN002,Samsung Electronics,Shanghai-Rotterdam Route,0.4672,21.02
+79,INFRASTRUCTURE_FAILURE,0.73,PORT003,Rotterdam Port,MAN003,Infineon Technologies,Hamburg-Rotterdam Route,0.3311,14.9
+79,INFRASTRUCTURE_FAILURE,0.73,PORT003,Rotterdam Port,MAN004,Foxconn,Shanghai-Rotterdam Route,0.4674,21.03
+80,PORT_CLOSURE,0.51,PORT005,Los Angeles Port,MAN001,TSMC,Taipei-Los Angeles Route,0.4385,19.73
+80,PORT_CLOSURE,0.51,PORT005,Los Angeles Port,MAN002,Samsung Electronics,Shanghai-Los Angeles Route,0.4236,19.06
+80,PORT_CLOSURE,0.51,PORT005,Los Angeles Port,MAN004,Foxconn,Shanghai-Los Angeles Route,0.4238,19.07
+81,PORT_STRIKE,0.5,PORT003,Rotterdam Port,MAN001,TSMC,Taipei-Rotterdam Route,0.3475,15.64
+81,PORT_STRIKE,0.5,PORT003,Rotterdam Port,MAN002,Samsung Electronics,Shanghai-Rotterdam Route,0.3557,16.01
+81,PORT_STRIKE,0.5,PORT003,Rotterdam Port,MAN003,Infineon Technologies,Hamburg-Rotterdam Route,0.232,10.44
+81,PORT_STRIKE,0.5,PORT003,Rotterdam Port,MAN004,Foxconn,Shanghai-Rotterdam Route,0.3559,16.02
+82,SEVERE_WEATHER,0.73,PORT005,Los Angeles Port,MAN001,TSMC,Taipei-Los Angeles Route,0.4638,20.87
+82,SEVERE_WEATHER,0.73,PORT005,Los Angeles Port,MAN002,Samsung Electronics,Shanghai-Los Angeles Route,0.4506,20.28
+82,SEVERE_WEATHER,0.73,PORT005,Los Angeles Port,MAN004,Foxconn,Shanghai-Los Angeles Route,0.4508,20.29
+83,PORT_STRIKE,0.77,PORT005,Los Angeles Port,MAN001,TSMC,Taipei-Los Angeles Route,0.4153,18.69
+83,PORT_STRIKE,0.77,PORT005,Los Angeles Port,MAN002,Samsung Electronics,Shanghai-Los Angeles Route,0.4038,18.17
+83,PORT_STRIKE,0.77,PORT005,Los Angeles Port,MAN004,Foxconn,Shanghai-Los Angeles Route,0.404,18.18
+84,PORT_CLOSURE,0.58,PORT003,Rotterdam Port,MAN001,TSMC,Taipei-Rotterdam Route,0.4829,21.73
+84,PORT_CLOSURE,0.58,PORT003,Rotterdam Port,MAN002,Samsung Electronics,Shanghai-Rotterdam Route,0.4936,22.21
+84,PORT_CLOSURE,0.58,PORT003,Rotterdam Port,MAN003,Infineon Technologies,Hamburg-Rotterdam Route,0.3328,14.98
+84,PORT_CLOSURE,0.58,PORT003,Rotterdam Port,MAN004,Foxconn,Shanghai-Rotterdam Route,0.4938,22.22
+85,SEVERE_WEATHER,0.49,PORT005,Los Angeles Port,MAN001,TSMC,Taipei-Los Angeles Route,0.381,17.14
+85,SEVERE_WEATHER,0.49,PORT005,Los Angeles Port,MAN002,Samsung Electronics,Shanghai-Los Angeles Route,0.3678,16.55
+85,SEVERE_WEATHER,0.49,PORT005,Los Angeles Port,MAN004,Foxconn,Shanghai-Los Angeles Route,0.368,16.56
+86,INFRASTRUCTURE_FAILURE,0.73,PORT003,Rotterdam Port,MAN001,TSMC,Taipei-Rotterdam Route,0.4582,20.62
+86,INFRASTRUCTURE_FAILURE,0.73,PORT003,Rotterdam Port,MAN002,Samsung Electronics,Shanghai-Rotterdam Route,0.4672,21.02
+86,INFRASTRUCTURE_FAILURE,0.73,PORT003,Rotterdam Port,MAN003,Infineon Technologies,Hamburg-Rotterdam Route,0.3311,14.9
+86,INFRASTRUCTURE_FAILURE,0.73,PORT003,Rotterdam Port,MAN004,Foxconn,Shanghai-Rotterdam Route,0.4674,21.03
+87,PORT_STRIKE,0.46,PORT005,Los Angeles Port,MAN001,TSMC,Taipei-Los Angeles Route,0.3223,14.5
+87,PORT_STRIKE,0.46,PORT005,Los Angeles Port,MAN002,Samsung Electronics,Shanghai-Los Angeles Route,0.3108,13.99
+87,PORT_STRIKE,0.46,PORT005,Los Angeles Port,MAN004,Foxconn,Shanghai-Los Angeles Route,0.311,13.99
+88,PORT_CLOSURE,0.4,PORT003,Rotterdam Port,MAN001,TSMC,Taipei-Rotterdam Route,0.4128,18.58
+88,PORT_CLOSURE,0.4,PORT003,Rotterdam Port,MAN002,Samsung Electronics,Shanghai-Rotterdam Route,0.4234,19.05
+88,PORT_CLOSURE,0.4,PORT003,Rotterdam Port,MAN003,Infineon Technologies,Hamburg-Rotterdam Route,0.2626,11.82
+88,PORT_CLOSURE,0.4,PORT003,Rotterdam Port,MAN004,Foxconn,Shanghai-Rotterdam Route,0.4236,19.06
+89,PORT_STRIKE,0.64,PORT003,Rotterdam Port,MAN001,TSMC,Taipei-Rotterdam Route,0.3895,17.53
+89,PORT_STRIKE,0.64,PORT003,Rotterdam Port,MAN002,Samsung Electronics,Shanghai-Rotterdam Route,0.3977,17.9
+89,PORT_STRIKE,0.64,PORT003,Rotterdam Port,MAN003,Infineon Technologies,Hamburg-Rotterdam Route,0.274,12.33
+89,PORT_STRIKE,0.64,PORT003,Rotterdam Port,MAN004,Foxconn,Shanghai-Rotterdam Route,0.3979,17.91
+90,PORT_CLOSURE,0.97,PORT005,Los Angeles Port,MAN001,TSMC,Taipei-Los Angeles Route,0.6179,27.81
+90,PORT_CLOSURE,0.97,PORT005,Los Angeles Port,MAN002,Samsung Electronics,Shanghai-Los Angeles Route,0.603,27.13
+90,PORT_CLOSURE,0.97,PORT005,Los Angeles Port,MAN004,Foxconn,Shanghai-Los Angeles Route,0.6032,27.14
+91,INFRASTRUCTURE_FAILURE,0.88,PORT003,Rotterdam Port,MAN001,TSMC,Taipei-Rotterdam Route,0.5077,22.85
+91,INFRASTRUCTURE_FAILURE,0.88,PORT003,Rotterdam Port,MAN002,Samsung Electronics,Shanghai-Rotterdam Route,0.5167,23.25
+91,INFRASTRUCTURE_FAILURE,0.88,PORT003,Rotterdam Port,MAN003,Infineon Technologies,Hamburg-Rotterdam Route,0.3806,17.13
+91,INFRASTRUCTURE_FAILURE,0.88,PORT003,Rotterdam Port,MAN004,Foxconn,Shanghai-Rotterdam Route,0.5169,23.26
+92,PORT_STRIKE,0.76,PORT005,Los Angeles Port,MAN001,TSMC,Taipei-Los Angeles Route,0.4123,18.55
+92,PORT_STRIKE,0.76,PORT005,Los Angeles Port,MAN002,Samsung Electronics,Shanghai-Los Angeles Route,0.4008,18.04
+92,PORT_STRIKE,0.76,PORT005,Los Angeles Port,MAN004,Foxconn,Shanghai-Los Angeles Route,0.401,18.05
+93,PORT_STRIKE,0.42,PORT005,Los Angeles Port,MAN001,TSMC,Taipei-Los Angeles Route,0.3103,13.96
+93,PORT_STRIKE,0.42,PORT005,Los Angeles Port,MAN002,Samsung Electronics,Shanghai-Los Angeles Route,0.2988,13.45
+93,PORT_STRIKE,0.42,PORT005,Los Angeles Port,MAN004,Foxconn,Shanghai-Los Angeles Route,0.299,13.46
+94,INFRASTRUCTURE_FAILURE,0.66,PORT005,Los Angeles Port,MAN001,TSMC,Taipei-Los Angeles Route,0.4205,18.92
+94,INFRASTRUCTURE_FAILURE,0.66,PORT005,Los Angeles Port,MAN002,Samsung Electronics,Shanghai-Los Angeles Route,0.4079,18.36
+94,INFRASTRUCTURE_FAILURE,0.66,PORT005,Los Angeles Port,MAN004,Foxconn,Shanghai-Los Angeles Route,0.4081,18.36
+95,INFRASTRUCTURE_FAILURE,0.53,PORT005,Los Angeles Port,MAN001,TSMC,Taipei-Los Angeles Route,0.3776,16.99
+95,INFRASTRUCTURE_FAILURE,0.53,PORT005,Los Angeles Port,MAN002,Samsung Electronics,Shanghai-Los Angeles Route,0.365,16.43
+95,INFRASTRUCTURE_FAILURE,0.53,PORT005,Los Angeles Port,MAN004,Foxconn,Shanghai-Los Angeles Route,0.3652,16.43
+96,INFRASTRUCTURE_FAILURE,0.71,PORT005,Los Angeles Port,MAN001,TSMC,Taipei-Los Angeles Route,0.437,19.66
+96,INFRASTRUCTURE_FAILURE,0.71,PORT005,Los Angeles Port,MAN002,Samsung Electronics,Shanghai-Los Angeles Route,0.4244,19.1
+96,INFRASTRUCTURE_FAILURE,0.71,PORT005,Los Angeles Port,MAN004,Foxconn,Shanghai-Los Angeles Route,0.4246,19.11
+97,SEVERE_WEATHER,0.71,PORT005,Los Angeles Port,MAN001,TSMC,Taipei-Los Angeles Route,0.4569,20.56
+97,SEVERE_WEATHER,0.71,PORT005,Los Angeles Port,MAN002,Samsung Electronics,Shanghai-Los Angeles Route,0.4437,19.97
+97,SEVERE_WEATHER,0.71,PORT005,Los Angeles Port,MAN004,Foxconn,Shanghai-Los Angeles Route,0.4439,19.98
+98,SEVERE_WEATHER,0.82,PORT005,Los Angeles Port,MAN001,TSMC,Taipei-Los Angeles Route,0.4948,22.27
+98,SEVERE_WEATHER,0.82,PORT005,Los Angeles Port,MAN002,Samsung Electronics,Shanghai-Los Angeles Route,0.4817,21.68
+98,SEVERE_WEATHER,0.82,PORT005,Los Angeles Port,MAN004,Foxconn,Shanghai-Los Angeles Route,0.4818,21.68
+99,INFRASTRUCTURE_FAILURE,0.73,PORT005,Los Angeles Port,MAN001,TSMC,Taipei-Los Angeles Route,0.4436,19.96
+99,INFRASTRUCTURE_FAILURE,0.73,PORT005,Los Angeles Port,MAN002,Samsung Electronics,Shanghai-Los Angeles Route,0.431,19.39
+99,INFRASTRUCTURE_FAILURE,0.73,PORT005,Los Angeles Port,MAN004,Foxconn,Shanghai-Los Angeles Route,0.4312,19.4
+100,INFRASTRUCTURE_FAILURE,0.52,PORT005,Los Angeles Port,MAN001,TSMC,Taipei-Los Angeles Route,0.3743,16.84
+100,INFRASTRUCTURE_FAILURE,0.52,PORT005,Los Angeles Port,MAN002,Samsung Electronics,Shanghai-Los Angeles Route,0.3617,16.28
+100,INFRASTRUCTURE_FAILURE,0.52,PORT005,Los Angeles Port,MAN004,Foxconn,Shanghai-Los Angeles Route,0.3619,16.29
