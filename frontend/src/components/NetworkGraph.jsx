@@ -1,6 +1,5 @@
 import { useEffect, useRef } from "react";
 import * as d3 from "d3";
-import { networkLinks, networkNodes } from "../data/networkData";
 
 const riskColours = {
   low: "#FEB909",
@@ -8,16 +7,70 @@ const riskColours = {
   high: "#832A1A",
 };
 
-function NetworkGraph({ selectedNode, onSelectNode }) {
+function getRisk(node) {
+  const riskScore = Number(node.properties?.risk_score ?? 0);
+
+  if (riskScore >= 0.25) {
+    return "high";
+  }
+
+  if (riskScore >= 0.15) {
+    return "medium";
+  }
+
+  return "low";
+}
+
+function getLocation(node) {
+  return (
+    node.properties?.country ||
+    node.properties?.region ||
+    "Unknown"
+  );
+}
+
+function getShortName(name = "") {
+  const maxLength = 22;
+
+  if (name.length <= maxLength) {
+    return name;
+  }
+
+  return `${name.slice(0, maxLength - 3)}...`;
+}
+
+function NetworkGraph({
+  selectedNode,
+  onSelectNode,
+  networkNodes = [],
+  networkEdges = [],
+}) {
   const svgRef = useRef(null);
 
   useEffect(() => {
     const width = 900;
     const height = 520;
 
-    // Use copies because D3 adds position properties to the objects.
-    const nodes = networkNodes.map((node) => ({ ...node }));
-    const links = networkLinks.map((link) => ({ ...link }));
+    if (!networkNodes.length) {
+      return;
+    }
+
+    const nodes = networkNodes.map((node) => ({
+      ...node,
+      risk: getRisk(node),
+      location: getLocation(node),
+      shortName: getShortName(node.name),
+    }));
+
+    const nodeIds = new Set(nodes.map((node) => node.id));
+
+    const links = networkEdges
+      .filter(
+        (edge) =>
+          nodeIds.has(edge.source) &&
+          nodeIds.has(edge.target)
+      )
+      .map((edge) => ({ ...edge }));
 
     const svg = d3.select(svgRef.current);
 
@@ -46,7 +99,10 @@ function NetworkGraph({ selectedNode, onSelectNode }) {
       .attr("class", "network-node")
       .attr("tabindex", 0)
       .attr("role", "button")
-      .attr("aria-label", (node) => `${node.name}, ${node.risk} risk`)
+      .attr(
+        "aria-label",
+        (node) => `${node.name}, ${node.risk} risk`
+      )
       .on("click", (_event, node) => {
         onSelectNode(node);
       })
@@ -55,12 +111,45 @@ function NetworkGraph({ selectedNode, onSelectNode }) {
           event.preventDefault();
           onSelectNode(node);
         }
-      });
+      })
+      .call(
+        d3
+          .drag()
+          .on("start", (event, node) => {
+            if (!event.active) {
+              simulation.alphaTarget(0.3).restart();
+            }
+
+            node.fx = node.x;
+            node.fy = node.y;
+          })
+          .on("drag", (event, node) => {
+            node.fx = event.x;
+            node.fy = event.y;
+          })
+          .on("end", (event, node) => {
+            if (!event.active) {
+              simulation.alphaTarget(0);
+            }
+
+            node.fx = null;
+            node.fy = null;
+          })
+      );
+
+    nodeElements
+      .append("title")
+      .text(
+        (node) =>
+          `${node.name}\n${node.type}\n${node.location}\n${node.risk} risk`
+      );
 
     nodeElements
       .append("circle")
       .attr("class", "node-halo")
-      .attr("r", (node) => (node.id === selectedNode?.id ? 29 : 24))
+      .attr("r", (node) =>
+        node.id === selectedNode?.id ? 29 : 24
+      )
       .attr("stroke", (node) => riskColours[node.risk]);
 
     nodeElements
@@ -74,7 +163,7 @@ function NetworkGraph({ selectedNode, onSelectNode }) {
       .attr("class", "node-name")
       .attr("text-anchor", "middle")
       .attr("y", 42)
-      .text((node) => node.name);
+      .text((node) => node.shortName);
 
     nodeElements
       .append("text")
@@ -90,51 +179,74 @@ function NetworkGraph({ selectedNode, onSelectNode }) {
         d3
           .forceLink(links)
           .id((node) => node.id)
-          .distance(145)
+          .distance(175)
+          .strength(0.7)
       )
-      .force("charge", d3.forceManyBody().strength(-620))
-      .force("center", d3.forceCenter(width / 2, height / 2))
-      .force("collision", d3.forceCollide().radius(70));
+      .force(
+        "charge",
+        d3.forceManyBody().strength(-900)
+      )
+      .force(
+        "center",
+        d3.forceCenter(width / 2, height / 2)
+      )
+      .force(
+        "collision",
+        d3.forceCollide().radius(82).strength(1)
+      )
+      .force(
+        "x",
+        d3.forceX(width / 2).strength(0.025)
+      )
+      .force(
+        "y",
+        d3.forceY(height / 2).strength(0.025)
+      );
 
     simulation.on("tick", () => {
-  const horizontalPadding = 95;
-  const verticalPadding = 75;
+      const horizontalPadding = 105;
+      const verticalPadding = 70;
 
-  nodes.forEach((node) => {
-    node.x = Math.max(
-      horizontalPadding,
-      Math.min(width - horizontalPadding, node.x)
-    );
+      nodes.forEach((node) => {
+        node.x = Math.max(
+          horizontalPadding,
+          Math.min(width - horizontalPadding, node.x)
+        );
 
-    node.y = Math.max(
-      verticalPadding,
-      Math.min(height - verticalPadding, node.y)
-    );
-  });
+        node.y = Math.max(
+          verticalPadding,
+          Math.min(height - verticalPadding, node.y)
+        );
+      });
 
-  linkElements
-    .attr("x1", (link) => link.source.x)
-    .attr("y1", (link) => link.source.y)
-    .attr("x2", (link) => link.target.x)
-    .attr("y2", (link) => link.target.y);
+      linkElements
+        .attr("x1", (link) => link.source.x)
+        .attr("y1", (link) => link.source.y)
+        .attr("x2", (link) => link.target.x)
+        .attr("y2", (link) => link.target.y);
 
-  nodeElements.attr(
-    "transform",
-    (node) => `translate(${node.x}, ${node.y})`
-  );
-});
+      nodeElements.attr(
+        "transform",
+        (node) => `translate(${node.x}, ${node.y})`
+      );
+    });
 
     return () => {
       simulation.stop();
     };
-  }, [selectedNode, onSelectNode]);
+  }, [
+    networkNodes,
+    networkEdges,
+    selectedNode,
+    onSelectNode,
+  ]);
 
   return (
     <div className="network-canvas">
       <svg
         ref={svgRef}
         className="network-svg"
-        aria-label="Static global supply-chain network"
+        aria-label="Global supply-chain network"
       />
 
       <div className="network-legend">
