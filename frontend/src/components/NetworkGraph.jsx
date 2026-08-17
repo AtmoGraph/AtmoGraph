@@ -10,14 +10,8 @@ const riskColours = {
 function getRisk(node) {
   const riskScore = Number(node.properties?.risk_score ?? 0);
 
-  if (riskScore >= 0.25) {
-    return "high";
-  }
-
-  if (riskScore >= 0.15) {
-    return "medium";
-  }
-
+  if (riskScore >= 0.25) return "high";
+  if (riskScore >= 0.15) return "medium";
   return "low";
 }
 
@@ -46,14 +40,13 @@ function NetworkGraph({
   networkEdges = [],
 }) {
   const svgRef = useRef(null);
+  const zoomRef = useRef(null);
 
   useEffect(() => {
     const width = 900;
     const height = 520;
 
-    if (!networkNodes.length) {
-      return;
-    }
+    if (!networkNodes.length) return;
 
     const nodes = networkNodes.map((node) => ({
       ...node,
@@ -80,7 +73,9 @@ function NetworkGraph({
       .attr("viewBox", `0 0 ${width} ${height}`)
       .attr("preserveAspectRatio", "xMidYMid meet");
 
-    const graphLayer = svg.append("g");
+    const graphLayer = svg
+      .append("g")
+      .attr("class", "graph-layer");
 
     const linkElements = graphLayer
       .append("g")
@@ -101,9 +96,11 @@ function NetworkGraph({
       .attr("role", "button")
       .attr(
         "aria-label",
-        (node) => `${node.name}, ${node.risk} risk`
+        (node) =>
+          `${node.name}, ${node.type}, ${node.risk} risk`
       )
-      .on("click", (_event, node) => {
+      .on("click", (event, node) => {
+        event.stopPropagation();
         onSelectNode(node);
       })
       .on("keydown", (event, node) => {
@@ -111,37 +108,13 @@ function NetworkGraph({
           event.preventDefault();
           onSelectNode(node);
         }
-      })
-      .call(
-        d3
-          .drag()
-          .on("start", (event, node) => {
-            if (!event.active) {
-              simulation.alphaTarget(0.3).restart();
-            }
-
-            node.fx = node.x;
-            node.fy = node.y;
-          })
-          .on("drag", (event, node) => {
-            node.fx = event.x;
-            node.fy = event.y;
-          })
-          .on("end", (event, node) => {
-            if (!event.active) {
-              simulation.alphaTarget(0);
-            }
-
-            node.fx = null;
-            node.fy = null;
-          })
-      );
+      });
 
     nodeElements
       .append("title")
       .text(
         (node) =>
-          `${node.name}\n${node.type}\n${node.location}\n${node.risk} risk`
+          `${node.name}\nType: ${node.type}\nLocation: ${node.location}\nRisk: ${node.risk}`
       );
 
     nodeElements
@@ -203,6 +176,33 @@ function NetworkGraph({
         d3.forceY(height / 2).strength(0.025)
       );
 
+    nodeElements.call(
+      d3
+        .drag()
+        .on("start", (event, node) => {
+          event.sourceEvent.stopPropagation();
+
+          if (!event.active) {
+            simulation.alphaTarget(0.3).restart();
+          }
+
+          node.fx = node.x;
+          node.fy = node.y;
+        })
+        .on("drag", (event, node) => {
+          node.fx = event.x;
+          node.fy = event.y;
+        })
+        .on("end", (event, node) => {
+          if (!event.active) {
+            simulation.alphaTarget(0);
+          }
+
+          node.fx = null;
+          node.fy = null;
+        })
+    );
+
     simulation.on("tick", () => {
       const horizontalPadding = 105;
       const verticalPadding = 70;
@@ -231,8 +231,24 @@ function NetworkGraph({
       );
     });
 
+    const zoomBehavior = d3
+      .zoom()
+      .scaleExtent([0.45, 2.5])
+      .on("zoom", (event) => {
+        graphLayer.attr("transform", event.transform);
+      });
+
+    zoomRef.current = zoomBehavior;
+
+    svg.call(zoomBehavior);
+
+    // Keep node clicks from being treated as double-click zoom.
+    svg.on("dblclick.zoom", null);
+
     return () => {
       simulation.stop();
+      svg.on(".zoom", null);
+      zoomRef.current = null;
     };
   }, [
     networkNodes,
@@ -241,12 +257,61 @@ function NetworkGraph({
     onSelectNode,
   ]);
 
+  const zoomBy = (factor) => {
+    if (!svgRef.current || !zoomRef.current) return;
+
+    d3.select(svgRef.current)
+      .transition()
+      .duration(200)
+      .call(zoomRef.current.scaleBy, factor);
+  };
+
+  const resetZoom = () => {
+    if (!svgRef.current || !zoomRef.current) return;
+
+    d3.select(svgRef.current)
+      .transition()
+      .duration(250)
+      .call(
+        zoomRef.current.transform,
+        d3.zoomIdentity
+      );
+  };
+
   return (
     <div className="network-canvas">
+      <div className="network-controls">
+        <button
+          type="button"
+          onClick={() => zoomBy(1.2)}
+          aria-label="Zoom in"
+          title="Zoom in"
+        >
+          +
+        </button>
+
+        <button
+          type="button"
+          onClick={() => zoomBy(0.8)}
+          aria-label="Zoom out"
+          title="Zoom out"
+        >
+          −
+        </button>
+
+        <button
+          type="button"
+          onClick={resetZoom}
+          title="Reset graph view"
+        >
+          Reset
+        </button>
+      </div>
+
       <svg
         ref={svgRef}
         className="network-svg"
-        aria-label="Global supply-chain network"
+        aria-label="Interactive global supply-chain network"
       />
 
       <div className="network-legend">
@@ -264,6 +329,10 @@ function NetworkGraph({
           <i className="legend-dot high" />
           Critical
         </span>
+      </div>
+
+      <div className="network-help">
+        Scroll to zoom · Drag empty space to pan · Drag node to move · Click node for details
       </div>
     </div>
   );

@@ -297,7 +297,7 @@ function App() {
           </p>
 
           <small>Backend connected</small>
-          <small>Week 1 · v0.1.0</small>
+          <small>AtmoGraph  v0.1.0</small>
         </div>
       </aside>
 
@@ -321,14 +321,14 @@ function App() {
           </button>
 
           <div className="user-profile">
-            <div className="avatar">SC</div>
+            <div className="avatar">AS</div>
 
             <div>
-              <strong>Shreyasi</strong>
+              <strong>Leader</strong>
               <small>Project lead</small>
             </div>
           </div>
-        </header>
+        </header> 
 
         <div className="dashboard" id="overview">
           <section className="dashboard-heading">
@@ -519,36 +519,71 @@ function App() {
                 </div>
 
                 <div className="prediction-scenario">
-                  <strong>PORT003 · Rotterdam Port</strong>
-                  <span>Severity: 95%</span>
+                  <div className="prediction-scenario-main">
+                    <span className="prediction-eyebrow">Scenario</span>
+                    <strong>PORT003 · Rotterdam Port</strong>
+                  </div>
+
+                  <span className="prediction-severity">
+                    <span>Severity</span>
+                    95%
+                  </span>
                 </div>
 
                 <div className="prediction-list">
-                  {predictionLoading && <p>Loading AI predictions...</p>}
+                  {predictionLoading && (
+                    <div className="prediction-state">
+                      <span className="prediction-state-dot" />
+                      Loading AI predictions...
+                    </div>
+                  )}
 
                   {!predictionLoading && predictionError && (
-                    <p>{predictionError}</p>
+                    <div className="prediction-state prediction-state-error">
+                      {predictionError}
+                    </div>
                   )}
 
                   {!predictionLoading &&
                     !predictionError &&
-                    predictions.map((item) => (
-                      <div className="prediction-row" key={item.node_id}>
-                        <div>
-                          <strong>{item.node_name}</strong>
-                          <small>{item.node_type}</small>
-                        </div>
+                    predictions.map((item, index) => {
+                      const percentage = Math.min(
+                        100,
+                        Math.max(0, Number(item.prediction) * 100)
+                      );
 
-                        <span>
-                          {(Number(item.prediction) * 100).toFixed(2)}%
-                        </span>
-                      </div>
-                    ))}
+                      return (
+                        <div
+                          className="prediction-row"
+                          key={item.node_id}
+                        >
+                          <div className="prediction-rank">
+                            {String(index + 1).padStart(2, "0")}
+                          </div>
+
+                          <div className="prediction-info">
+                            <strong>{item.node_name}</strong>
+                            <small>{item.node_type}</small>
+
+                            <div className="prediction-progress">
+                              <span style={{ width: `${percentage}%` }} />
+                            </div>
+                          </div>
+
+                          <div className="prediction-score">
+                            <strong>{percentage.toFixed(2)}%</strong>
+                            <small>impact</small>
+                          </div>
+                        </div>
+                      );
+                    })}
 
                   {!predictionLoading &&
                     !predictionError &&
                     predictions.length === 0 && (
-                      <p>No predictions available.</p>
+                      <div className="prediction-state">
+                        No predictions available.
+                      </div>
                     )}
                 </div>
               </article>
