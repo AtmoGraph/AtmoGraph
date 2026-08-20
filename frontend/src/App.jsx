@@ -328,7 +328,7 @@ function App() {
               <small>Project lead</small>
             </div>
           </div>
-        </header> 
+        </header>
 
         <div className="dashboard" id="overview">
           <section className="dashboard-heading">
@@ -390,41 +390,74 @@ function App() {
                 networkEdges={networkEdges}
               />
 
-              <div className="selected-node">
-                <span
-                  className={`selected-node-marker ${
-                    selectedNode?.risk || "low"
-                  }`}
-                />
+              <div className="supplier-details-panel">
+                <div className="panel-heading">
+                  <div>
+                    <span className="eyebrow">Node details</span>
+                    <h2>
+                      {selectedNode?.type === "Supplier"
+                        ? "Supplier Details"
+                        : `${selectedNode?.type || "Node"} Details`}
+                    </h2>
+                  </div>
 
-                <div>
-                  <small>
-                    Selected {selectedNode?.type || "node"}
-                  </small>
-
-                  <strong>
-                    {selectedNode?.name || "No node selected"}
-                  </strong>
-
-                  <p>
-                    {selectedNode?.location ||
-                      selectedNode?.properties?.country ||
-                      selectedNode?.properties?.region ||
-                      "Unknown"}{" "}
-                    · Capacity:{" "}
-                    {formatCapacity(
-                      selectedNode?.properties?.capacity
-                    )}
-                  </p>
+                  {selectedNode && (
+                    <span
+                      className={`risk-badge ${selectedNode.risk || "low"
+                        }`}
+                    >
+                      {selectedNode.risk || "unknown"} risk
+                    </span>
+                  )}
                 </div>
 
-                <span
-                  className={`risk-badge ${
-                    selectedNode?.risk || "low"
-                  }`}
-                >
-                  {selectedNode?.risk || "unknown"} risk
-                </span>
+                {selectedNode ? (
+                  <div className="details-grid">
+                    <div className="detail-item">
+                      <span>Name</span>
+                      <strong>{selectedNode.name || "N/A"}</strong>
+                    </div>
+
+                    <div className="detail-item">
+                      <span>Node Type</span>
+                      <strong>{selectedNode.type || "N/A"}</strong>
+                    </div>
+
+                    <div className="detail-item">
+                      <span>Node ID</span>
+                      <strong>{selectedNode.id || "N/A"}</strong>
+                    </div>
+
+                    <div className="detail-item">
+                      <span>Country</span>
+                      <strong>
+                        {selectedNode.properties?.country ||
+                          selectedNode.properties?.region ||
+                          "N/A"}
+                      </strong>
+                    </div>
+
+                    <div className="detail-item">
+                      <span>Risk Score</span>
+                      <strong>
+                        {selectedNode.properties?.risk_score ?? "N/A"}
+                      </strong>
+                    </div>
+
+                    <div className="detail-item">
+                      <span>Capacity</span>
+                      <strong>
+                        {formatCapacity(
+                          selectedNode.properties?.capacity
+                        )}
+                      </strong>
+                    </div>
+                  </div>
+                ) : (
+                  <div className="empty-details">
+                    Click a node in the graph to view details.
+                  </div>
+                )}
               </div>
             </article>
 
@@ -465,11 +498,10 @@ function App() {
 
                       return (
                         <article
-                          className={`disruption-item ${
-                            severity === "Critical"
+                          className={`disruption-item ${severity === "Critical"
                               ? "critical"
                               : "warning"
-                          }`}
+                            }`}
                           key={disruption.id}
                         >
                           <span className="disruption-icon">

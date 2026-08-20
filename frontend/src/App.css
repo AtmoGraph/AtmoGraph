@@ -1814,3 +1814,316 @@ body {
     min-width: 52px;
   }
 }
+
+.supplier-details-panel {
+  margin-top: 14px;
+  padding: 18px 20px;
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  background: var(--panel-dark);
+}
+
+.supplier-details-panel .panel-heading {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  margin-bottom: 18px;
+}
+
+.supplier-details-panel h2 {
+  margin: 4px 0 0;
+  font-size: 17px;
+}
+
+.details-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 12px;
+}
+
+.detail-item {
+  padding: 12px;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  background: var(--panel);
+}
+
+.detail-item span {
+  display: block;
+  margin-bottom: 5px;
+  color: var(--muted);
+  font-size: 10px;
+}
+
+.detail-item strong {
+  display: block;
+  overflow: hidden;
+  color: var(--text);
+  font-size: 12px;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.empty-details {
+  padding: 18px 0;
+  color: var(--muted);
+  font-size: 12px;
+}
+
+@media (max-width: 800px) {
+  .details-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 520px) {
+  .details-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* =========================================================
+   FINAL UI POLISH — WEEK 2 INTERACTIVE GRAPH
+   Visual-only changes. No React/data logic is changed.
+   ========================================================= */
+
+.supplier-details-panel {
+  position: relative;
+  margin-top: 14px;
+  padding: 20px;
+  border: 1px solid rgba(131, 166, 206, 0.24);
+  border-radius: 14px;
+  background: linear-gradient(145deg, rgba(13, 30, 76, 0.96), rgba(11, 27, 50, 0.98));
+  box-shadow: 0 14px 35px rgba(2, 7, 17, 0.18), inset 0 1px 0 rgba(255, 255, 255, 0.025);
+}
+
+.supplier-details-panel::before {
+  position: absolute;
+  top: 0;
+  left: 20px;
+  right: 20px;
+  height: 1px;
+  content: "";
+  background: linear-gradient(90deg, transparent, rgba(196, 136, 203, 0.55), transparent);
+}
+
+.supplier-details-panel .panel-heading {
+  min-height: auto;
+  margin: 0 0 16px;
+  padding: 2px 2px 15px;
+  border-bottom: 1px solid rgba(131, 166, 206, 0.18);
+}
+
+.supplier-details-panel .panel-heading h2 {
+  margin: 5px 0 0;
+  color: var(--text);
+  font-size: 17px;
+  font-weight: 750;
+  letter-spacing: -0.25px;
+}
+
+.supplier-details-panel .eyebrow {
+  color: var(--blue);
+  font-size: 8px;
+  letter-spacing: 1.8px;
+}
+
+.supplier-details-panel .risk-badge {
+  padding: 7px 11px;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 999px;
+  font-size: 9px;
+  font-weight: 700;
+  box-shadow: 0 5px 14px rgba(0, 0, 0, 0.16);
+}
+
+.details-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 10px;
+}
+
+.detail-item {
+  position: relative;
+  min-width: 0;
+  min-height: 67px;
+  padding: 13px 14px;
+  overflow: hidden;
+  border: 1px solid rgba(131, 166, 206, 0.18);
+  border-radius: 10px;
+  background: linear-gradient(145deg, rgba(18, 38, 83, 0.92), rgba(13, 30, 76, 0.82));
+  transition: transform 0.18s ease, border-color 0.18s ease, box-shadow 0.18s ease;
+}
+
+.detail-item::after {
+  position: absolute;
+  right: -18px;
+  bottom: -22px;
+  width: 55px;
+  height: 55px;
+  content: "";
+  border-radius: 50%;
+  background: rgba(131, 166, 206, 0.05);
+  pointer-events: none;
+}
+
+.detail-item:hover {
+  transform: translateY(-1px);
+  border-color: rgba(196, 136, 203, 0.35);
+  box-shadow: 0 8px 18px rgba(2, 7, 17, 0.16);
+}
+
+.detail-item span {
+  display: block;
+  margin-bottom: 7px;
+  color: var(--muted);
+  font-size: 9px;
+  font-weight: 600;
+  letter-spacing: 0.25px;
+  text-transform: uppercase;
+}
+
+.detail-item strong {
+  position: relative;
+  z-index: 1;
+  display: block;
+  overflow: hidden;
+  color: var(--text);
+  font-size: 12px;
+  font-weight: 700;
+  line-height: 1.3;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.detail-item:nth-child(5) strong {
+  color: #fe8309;
+}
+
+.detail-item:nth-child(6) strong {
+  color: var(--blue);
+}
+
+.network-controls {
+  border-color: rgba(131, 166, 206, 0.24);
+  background: rgba(8, 20, 37, 0.92);
+  box-shadow: 0 10px 24px rgba(2, 7, 17, 0.28);
+}
+
+.network-controls button {
+  border-color: rgba(131, 166, 206, 0.18);
+  background: rgba(16, 41, 74, 0.95);
+}
+
+.network-controls button:hover {
+  color: #fff;
+  border-color: rgba(196, 136, 203, 0.5);
+  background: rgba(24, 56, 95, 0.98);
+}
+
+.network-help,
+.network-legend {
+  border-color: rgba(131, 166, 206, 0.18);
+  background: rgba(8, 20, 37, 0.92);
+  backdrop-filter: blur(8px);
+}
+
+.network-help {
+  color: #91a8c1;
+}
+
+.prediction-panel {
+  border-color: rgba(131, 166, 206, 0.22);
+}
+
+.prediction-scenario {
+  margin: 14px 14px 8px;
+  border-color: rgba(131, 166, 206, 0.2);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.02);
+}
+
+.prediction-row {
+  margin: 0 2px;
+  border-radius: 8px;
+}
+
+.prediction-row:hover {
+  background: rgba(131, 166, 206, 0.07);
+}
+
+.prediction-rank {
+  background: rgba(131, 166, 206, 0.07);
+}
+
+.prediction-progress {
+  background: rgba(131, 166, 206, 0.14);
+}
+
+.panel,
+.summary-card,
+.search-results,
+.supplier-details-panel {
+  box-shadow: 0 12px 30px rgba(2, 7, 17, 0.16), inset 0 1px 0 rgba(255, 255, 255, 0.018);
+}
+
+.panel-heading {
+  background: rgba(13, 30, 76, 0.18);
+}
+
+* {
+  scrollbar-width: thin;
+  scrollbar-color: #304766 transparent;
+}
+
+*::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+*::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+*::-webkit-scrollbar-thumb {
+  border-radius: 6px;
+  background: #304766;
+}
+
+*::-webkit-scrollbar-thumb:hover {
+  background: #49627f;
+}
+
+@media (max-width: 800px) {
+  .details-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .supplier-details-panel {
+    padding: 16px;
+  }
+}
+
+@media (max-width: 520px) {
+  .details-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .supplier-details-panel {
+    padding: 14px;
+    border-radius: 11px;
+  }
+
+  .supplier-details-panel .panel-heading {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+
+  .supplier-details-panel .risk-badge {
+    margin-left: 0;
+  }
+
+  .detail-item {
+    min-height: 62px;
+  }
+}
