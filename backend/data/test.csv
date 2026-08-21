@@ -1,0 +1,91 @@
+scenario_id,disruption_type,severity,disrupted_port_id,disrupted_port,manufacturer_id,manufacturer,product_id,product,route,warehouse_id,warehouse,market_id,market,impact_score,delay_days
+11,PORT_CLOSURE,0.65,PORT003,Rotterdam Port,MAN001,TSMC,PROD001,Advanced Semiconductor,Taipei-Rotterdam Route,WH001,Amsterdam Distribution Center,MARKET001,European Consumer Market,0.3189,14.35
+11,PORT_CLOSURE,0.65,PORT003,Rotterdam Port,MAN002,Samsung Electronics,PROD002,Memory Chip,Shanghai-Rotterdam Route,WH001,Amsterdam Distribution Center,MARKET001,European Consumer Market,0.3256,14.65
+11,PORT_CLOSURE,0.65,PORT003,Rotterdam Port,MAN004,Foxconn,PROD004,Smartphone,Shanghai-Rotterdam Route,WH001,Amsterdam Distribution Center,MARKET001,European Consumer Market,0.3257,14.66
+11,PORT_CLOSURE,0.65,PORT003,Rotterdam Port,MAN004,Foxconn,PROD005,Laptop,Shanghai-Rotterdam Route,WH001,Amsterdam Distribution Center,MARKET001,European Consumer Market,0.3257,14.66
+11,PORT_CLOSURE,0.65,PORT003,Rotterdam Port,MAN003,Infineon Technologies,PROD003,Automotive Chip,Hamburg-Rotterdam Route,WH001,Amsterdam Distribution Center,MARKET001,European Consumer Market,0.2251,10.13
+12,PORT_CLOSURE,0.52,PORT003,Rotterdam Port,MAN001,TSMC,PROD001,Advanced Semiconductor,Taipei-Rotterdam Route,WH001,Amsterdam Distribution Center,MARKET001,European Consumer Market,0.2872,12.92
+12,PORT_CLOSURE,0.52,PORT003,Rotterdam Port,MAN002,Samsung Electronics,PROD002,Memory Chip,Shanghai-Rotterdam Route,WH001,Amsterdam Distribution Center,MARKET001,European Consumer Market,0.2939,13.23
+12,PORT_CLOSURE,0.52,PORT003,Rotterdam Port,MAN004,Foxconn,PROD004,Smartphone,Shanghai-Rotterdam Route,WH001,Amsterdam Distribution Center,MARKET001,European Consumer Market,0.294,13.23
+12,PORT_CLOSURE,0.52,PORT003,Rotterdam Port,MAN004,Foxconn,PROD005,Laptop,Shanghai-Rotterdam Route,WH001,Amsterdam Distribution Center,MARKET001,European Consumer Market,0.294,13.23
+12,PORT_CLOSURE,0.52,PORT003,Rotterdam Port,MAN003,Infineon Technologies,PROD003,Automotive Chip,Hamburg-Rotterdam Route,WH001,Amsterdam Distribution Center,MARKET001,European Consumer Market,0.1934,8.7
+19,INFRASTRUCTURE_FAILURE,0.82,PORT003,Rotterdam Port,MAN001,TSMC,PROD001,Advanced Semiconductor,Taipei-Rotterdam Route,WH001,Amsterdam Distribution Center,MARKET001,European Consumer Market,0.3049,13.72
+19,INFRASTRUCTURE_FAILURE,0.82,PORT003,Rotterdam Port,MAN002,Samsung Electronics,PROD002,Memory Chip,Shanghai-Rotterdam Route,WH001,Amsterdam Distribution Center,MARKET001,European Consumer Market,0.3105,13.97
+19,INFRASTRUCTURE_FAILURE,0.82,PORT003,Rotterdam Port,MAN004,Foxconn,PROD004,Smartphone,Shanghai-Rotterdam Route,WH001,Amsterdam Distribution Center,MARKET001,European Consumer Market,0.3107,13.98
+19,INFRASTRUCTURE_FAILURE,0.82,PORT003,Rotterdam Port,MAN004,Foxconn,PROD005,Laptop,Shanghai-Rotterdam Route,WH001,Amsterdam Distribution Center,MARKET001,European Consumer Market,0.3107,13.98
+19,INFRASTRUCTURE_FAILURE,0.82,PORT003,Rotterdam Port,MAN003,Infineon Technologies,PROD003,Automotive Chip,Hamburg-Rotterdam Route,WH001,Amsterdam Distribution Center,MARKET001,European Consumer Market,0.2255,10.15
+20,SEVERE_WEATHER,0.53,PORT003,Rotterdam Port,MAN001,TSMC,PROD001,Advanced Semiconductor,Taipei-Rotterdam Route,WH001,Amsterdam Distribution Center,MARKET001,European Consumer Market,0.2562,11.53
+20,SEVERE_WEATHER,0.53,PORT003,Rotterdam Port,MAN002,Samsung Electronics,PROD002,Memory Chip,Shanghai-Rotterdam Route,WH001,Amsterdam Distribution Center,MARKET001,European Consumer Market,0.2621,11.79
+20,SEVERE_WEATHER,0.53,PORT003,Rotterdam Port,MAN004,Foxconn,PROD004,Smartphone,Shanghai-Rotterdam Route,WH001,Amsterdam Distribution Center,MARKET001,European Consumer Market,0.2623,11.8
+20,SEVERE_WEATHER,0.53,PORT003,Rotterdam Port,MAN004,Foxconn,PROD005,Laptop,Shanghai-Rotterdam Route,WH001,Amsterdam Distribution Center,MARKET001,European Consumer Market,0.2623,11.8
+20,SEVERE_WEATHER,0.53,PORT003,Rotterdam Port,MAN003,Infineon Technologies,PROD003,Automotive Chip,Hamburg-Rotterdam Route,WH001,Amsterdam Distribution Center,MARKET001,European Consumer Market,0.1732,7.79
+21,INFRASTRUCTURE_FAILURE,0.81,PORT005,Los Angeles Port,MAN001,TSMC,PROD001,Advanced Semiconductor,Taipei-Los Angeles Route,WH002,Chicago Distribution Center,MARKET002,North American Consumer Market,0.2938,13.22
+21,INFRASTRUCTURE_FAILURE,0.81,PORT005,Los Angeles Port,MAN002,Samsung Electronics,PROD002,Memory Chip,Shanghai-Los Angeles Route,WH002,Chicago Distribution Center,MARKET002,North American Consumer Market,0.2859,12.87
+21,INFRASTRUCTURE_FAILURE,0.81,PORT005,Los Angeles Port,MAN004,Foxconn,PROD004,Smartphone,Shanghai-Los Angeles Route,WH002,Chicago Distribution Center,MARKET002,North American Consumer Market,0.286,12.87
+21,INFRASTRUCTURE_FAILURE,0.81,PORT005,Los Angeles Port,MAN004,Foxconn,PROD005,Laptop,Shanghai-Los Angeles Route,WH002,Chicago Distribution Center,MARKET002,North American Consumer Market,0.286,12.87
+21,INFRASTRUCTURE_FAILURE,0.81,PORT005,Los Angeles Port,MAN001,TSMC,PROD001,Advanced Semiconductor,Taipei-Los Angeles Route,WH004,Los Angeles Distribution Center,MARKET002,North American Consumer Market,0.2938,13.22
+21,INFRASTRUCTURE_FAILURE,0.81,PORT005,Los Angeles Port,MAN002,Samsung Electronics,PROD002,Memory Chip,Shanghai-Los Angeles Route,WH004,Los Angeles Distribution Center,MARKET002,North American Consumer Market,0.2859,12.87
+21,INFRASTRUCTURE_FAILURE,0.81,PORT005,Los Angeles Port,MAN004,Foxconn,PROD004,Smartphone,Shanghai-Los Angeles Route,WH004,Los Angeles Distribution Center,MARKET002,North American Consumer Market,0.286,12.87
+21,INFRASTRUCTURE_FAILURE,0.81,PORT005,Los Angeles Port,MAN004,Foxconn,PROD005,Laptop,Shanghai-Los Angeles Route,WH004,Los Angeles Distribution Center,MARKET002,North American Consumer Market,0.286,12.87
+24,PORT_STRIKE,0.51,PORT005,Los Angeles Port,MAN001,TSMC,PROD001,Advanced Semiconductor,Taipei-Los Angeles Route,WH002,Chicago Distribution Center,MARKET002,North American Consumer Market,0.2108,9.49
+24,PORT_STRIKE,0.51,PORT005,Los Angeles Port,MAN002,Samsung Electronics,PROD002,Memory Chip,Shanghai-Los Angeles Route,WH002,Chicago Distribution Center,MARKET002,North American Consumer Market,0.2036,9.16
+24,PORT_STRIKE,0.51,PORT005,Los Angeles Port,MAN004,Foxconn,PROD004,Smartphone,Shanghai-Los Angeles Route,WH002,Chicago Distribution Center,MARKET002,North American Consumer Market,0.2038,9.17
+24,PORT_STRIKE,0.51,PORT005,Los Angeles Port,MAN004,Foxconn,PROD005,Laptop,Shanghai-Los Angeles Route,WH002,Chicago Distribution Center,MARKET002,North American Consumer Market,0.2038,9.17
+24,PORT_STRIKE,0.51,PORT005,Los Angeles Port,MAN001,TSMC,PROD001,Advanced Semiconductor,Taipei-Los Angeles Route,WH004,Los Angeles Distribution Center,MARKET002,North American Consumer Market,0.2108,9.49
+24,PORT_STRIKE,0.51,PORT005,Los Angeles Port,MAN002,Samsung Electronics,PROD002,Memory Chip,Shanghai-Los Angeles Route,WH004,Los Angeles Distribution Center,MARKET002,North American Consumer Market,0.2036,9.16
+24,PORT_STRIKE,0.51,PORT005,Los Angeles Port,MAN004,Foxconn,PROD004,Smartphone,Shanghai-Los Angeles Route,WH004,Los Angeles Distribution Center,MARKET002,North American Consumer Market,0.2038,9.17
+24,PORT_STRIKE,0.51,PORT005,Los Angeles Port,MAN004,Foxconn,PROD005,Laptop,Shanghai-Los Angeles Route,WH004,Los Angeles Distribution Center,MARKET002,North American Consumer Market,0.2038,9.17
+34,PORT_CLOSURE,0.67,PORT003,Rotterdam Port,MAN001,TSMC,PROD001,Advanced Semiconductor,Taipei-Rotterdam Route,WH001,Amsterdam Distribution Center,MARKET001,European Consumer Market,0.3238,14.57
+34,PORT_CLOSURE,0.67,PORT003,Rotterdam Port,MAN002,Samsung Electronics,PROD002,Memory Chip,Shanghai-Rotterdam Route,WH001,Amsterdam Distribution Center,MARKET001,European Consumer Market,0.3304,14.87
+34,PORT_CLOSURE,0.67,PORT003,Rotterdam Port,MAN004,Foxconn,PROD004,Smartphone,Shanghai-Rotterdam Route,WH001,Amsterdam Distribution Center,MARKET001,European Consumer Market,0.3306,14.88
+34,PORT_CLOSURE,0.67,PORT003,Rotterdam Port,MAN004,Foxconn,PROD005,Laptop,Shanghai-Rotterdam Route,WH001,Amsterdam Distribution Center,MARKET001,European Consumer Market,0.3306,14.88
+34,PORT_CLOSURE,0.67,PORT003,Rotterdam Port,MAN003,Infineon Technologies,PROD003,Automotive Chip,Hamburg-Rotterdam Route,WH001,Amsterdam Distribution Center,MARKET001,European Consumer Market,0.2299,10.35
+37,INFRASTRUCTURE_FAILURE,0.79,PORT005,Los Angeles Port,MAN001,TSMC,PROD001,Advanced Semiconductor,Taipei-Los Angeles Route,WH002,Chicago Distribution Center,MARKET002,North American Consumer Market,0.2896,13.03
+37,INFRASTRUCTURE_FAILURE,0.79,PORT005,Los Angeles Port,MAN002,Samsung Electronics,PROD002,Memory Chip,Shanghai-Los Angeles Route,WH002,Chicago Distribution Center,MARKET002,North American Consumer Market,0.2818,12.68
+37,INFRASTRUCTURE_FAILURE,0.79,PORT005,Los Angeles Port,MAN004,Foxconn,PROD004,Smartphone,Shanghai-Los Angeles Route,WH002,Chicago Distribution Center,MARKET002,North American Consumer Market,0.2819,12.69
+37,INFRASTRUCTURE_FAILURE,0.79,PORT005,Los Angeles Port,MAN004,Foxconn,PROD005,Laptop,Shanghai-Los Angeles Route,WH002,Chicago Distribution Center,MARKET002,North American Consumer Market,0.2819,12.69
+37,INFRASTRUCTURE_FAILURE,0.79,PORT005,Los Angeles Port,MAN001,TSMC,PROD001,Advanced Semiconductor,Taipei-Los Angeles Route,WH004,Los Angeles Distribution Center,MARKET002,North American Consumer Market,0.2896,13.03
+37,INFRASTRUCTURE_FAILURE,0.79,PORT005,Los Angeles Port,MAN002,Samsung Electronics,PROD002,Memory Chip,Shanghai-Los Angeles Route,WH004,Los Angeles Distribution Center,MARKET002,North American Consumer Market,0.2818,12.68
+37,INFRASTRUCTURE_FAILURE,0.79,PORT005,Los Angeles Port,MAN004,Foxconn,PROD004,Smartphone,Shanghai-Los Angeles Route,WH004,Los Angeles Distribution Center,MARKET002,North American Consumer Market,0.2819,12.69
+37,INFRASTRUCTURE_FAILURE,0.79,PORT005,Los Angeles Port,MAN004,Foxconn,PROD005,Laptop,Shanghai-Los Angeles Route,WH004,Los Angeles Distribution Center,MARKET002,North American Consumer Market,0.2819,12.69
+40,SEVERE_WEATHER,0.46,PORT003,Rotterdam Port,MAN001,TSMC,PROD001,Advanced Semiconductor,Taipei-Rotterdam Route,WH001,Amsterdam Distribution Center,MARKET001,European Consumer Market,0.2411,10.85
+40,SEVERE_WEATHER,0.46,PORT003,Rotterdam Port,MAN002,Samsung Electronics,PROD002,Memory Chip,Shanghai-Rotterdam Route,WH001,Amsterdam Distribution Center,MARKET001,European Consumer Market,0.247,11.12
+40,SEVERE_WEATHER,0.46,PORT003,Rotterdam Port,MAN004,Foxconn,PROD004,Smartphone,Shanghai-Rotterdam Route,WH001,Amsterdam Distribution Center,MARKET001,European Consumer Market,0.2472,11.12
+40,SEVERE_WEATHER,0.46,PORT003,Rotterdam Port,MAN004,Foxconn,PROD005,Laptop,Shanghai-Rotterdam Route,WH001,Amsterdam Distribution Center,MARKET001,European Consumer Market,0.2472,11.12
+40,SEVERE_WEATHER,0.46,PORT003,Rotterdam Port,MAN003,Infineon Technologies,PROD003,Automotive Chip,Hamburg-Rotterdam Route,WH001,Amsterdam Distribution Center,MARKET001,European Consumer Market,0.1581,7.11
+58,SEVERE_WEATHER,0.42,PORT003,Rotterdam Port,MAN001,TSMC,PROD001,Advanced Semiconductor,Taipei-Rotterdam Route,WH001,Amsterdam Distribution Center,MARKET001,European Consumer Market,0.2325,10.46
+58,SEVERE_WEATHER,0.42,PORT003,Rotterdam Port,MAN002,Samsung Electronics,PROD002,Memory Chip,Shanghai-Rotterdam Route,WH001,Amsterdam Distribution Center,MARKET001,European Consumer Market,0.2384,10.73
+58,SEVERE_WEATHER,0.42,PORT003,Rotterdam Port,MAN004,Foxconn,PROD004,Smartphone,Shanghai-Rotterdam Route,WH001,Amsterdam Distribution Center,MARKET001,European Consumer Market,0.2385,10.73
+58,SEVERE_WEATHER,0.42,PORT003,Rotterdam Port,MAN004,Foxconn,PROD005,Laptop,Shanghai-Rotterdam Route,WH001,Amsterdam Distribution Center,MARKET001,European Consumer Market,0.2385,10.73
+58,SEVERE_WEATHER,0.42,PORT003,Rotterdam Port,MAN003,Infineon Technologies,PROD003,Automotive Chip,Hamburg-Rotterdam Route,WH001,Amsterdam Distribution Center,MARKET001,European Consumer Market,0.1495,6.73
+71,PORT_CLOSURE,0.55,PORT005,Los Angeles Port,MAN001,TSMC,PROD001,Advanced Semiconductor,Taipei-Los Angeles Route,WH002,Chicago Distribution Center,MARKET002,North American Consumer Market,0.2838,12.77
+71,PORT_CLOSURE,0.55,PORT005,Los Angeles Port,MAN002,Samsung Electronics,PROD002,Memory Chip,Shanghai-Los Angeles Route,WH002,Chicago Distribution Center,MARKET002,North American Consumer Market,0.2745,12.35
+71,PORT_CLOSURE,0.55,PORT005,Los Angeles Port,MAN004,Foxconn,PROD004,Smartphone,Shanghai-Los Angeles Route,WH002,Chicago Distribution Center,MARKET002,North American Consumer Market,0.2746,12.36
+71,PORT_CLOSURE,0.55,PORT005,Los Angeles Port,MAN004,Foxconn,PROD005,Laptop,Shanghai-Los Angeles Route,WH002,Chicago Distribution Center,MARKET002,North American Consumer Market,0.2746,12.36
+71,PORT_CLOSURE,0.55,PORT005,Los Angeles Port,MAN001,TSMC,PROD001,Advanced Semiconductor,Taipei-Los Angeles Route,WH004,Los Angeles Distribution Center,MARKET002,North American Consumer Market,0.2838,12.77
+71,PORT_CLOSURE,0.55,PORT005,Los Angeles Port,MAN002,Samsung Electronics,PROD002,Memory Chip,Shanghai-Los Angeles Route,WH004,Los Angeles Distribution Center,MARKET002,North American Consumer Market,0.2745,12.35
+71,PORT_CLOSURE,0.55,PORT005,Los Angeles Port,MAN004,Foxconn,PROD004,Smartphone,Shanghai-Los Angeles Route,WH004,Los Angeles Distribution Center,MARKET002,North American Consumer Market,0.2746,12.36
+71,PORT_CLOSURE,0.55,PORT005,Los Angeles Port,MAN004,Foxconn,PROD005,Laptop,Shanghai-Los Angeles Route,WH004,Los Angeles Distribution Center,MARKET002,North American Consumer Market,0.2746,12.36
+77,SEVERE_WEATHER,0.73,PORT005,Los Angeles Port,MAN001,TSMC,PROD001,Advanced Semiconductor,Taipei-Los Angeles Route,WH002,Chicago Distribution Center,MARKET002,North American Consumer Market,0.2899,13.05
+77,SEVERE_WEATHER,0.73,PORT005,Los Angeles Port,MAN002,Samsung Electronics,PROD002,Memory Chip,Shanghai-Los Angeles Route,WH002,Chicago Distribution Center,MARKET002,North American Consumer Market,0.2816,12.67
+77,SEVERE_WEATHER,0.73,PORT005,Los Angeles Port,MAN004,Foxconn,PROD004,Smartphone,Shanghai-Los Angeles Route,WH002,Chicago Distribution Center,MARKET002,North American Consumer Market,0.2818,12.68
+77,SEVERE_WEATHER,0.73,PORT005,Los Angeles Port,MAN004,Foxconn,PROD005,Laptop,Shanghai-Los Angeles Route,WH002,Chicago Distribution Center,MARKET002,North American Consumer Market,0.2818,12.68
+77,SEVERE_WEATHER,0.73,PORT005,Los Angeles Port,MAN001,TSMC,PROD001,Advanced Semiconductor,Taipei-Los Angeles Route,WH004,Los Angeles Distribution Center,MARKET002,North American Consumer Market,0.2899,13.05
+77,SEVERE_WEATHER,0.73,PORT005,Los Angeles Port,MAN002,Samsung Electronics,PROD002,Memory Chip,Shanghai-Los Angeles Route,WH004,Los Angeles Distribution Center,MARKET002,North American Consumer Market,0.2816,12.67
+77,SEVERE_WEATHER,0.73,PORT005,Los Angeles Port,MAN004,Foxconn,PROD004,Smartphone,Shanghai-Los Angeles Route,WH004,Los Angeles Distribution Center,MARKET002,North American Consumer Market,0.2818,12.68
+77,SEVERE_WEATHER,0.73,PORT005,Los Angeles Port,MAN004,Foxconn,PROD005,Laptop,Shanghai-Los Angeles Route,WH004,Los Angeles Distribution Center,MARKET002,North American Consumer Market,0.2818,12.68
+82,PORT_STRIKE,0.58,PORT003,Rotterdam Port,MAN001,TSMC,PROD001,Advanced Semiconductor,Taipei-Rotterdam Route,WH001,Amsterdam Distribution Center,MARKET001,European Consumer Market,0.2322,10.45
+82,PORT_STRIKE,0.58,PORT003,Rotterdam Port,MAN002,Samsung Electronics,PROD002,Memory Chip,Shanghai-Rotterdam Route,WH001,Amsterdam Distribution Center,MARKET001,European Consumer Market,0.2373,10.68
+82,PORT_STRIKE,0.58,PORT003,Rotterdam Port,MAN004,Foxconn,PROD004,Smartphone,Shanghai-Rotterdam Route,WH001,Amsterdam Distribution Center,MARKET001,European Consumer Market,0.2374,10.68
+82,PORT_STRIKE,0.58,PORT003,Rotterdam Port,MAN004,Foxconn,PROD005,Laptop,Shanghai-Rotterdam Route,WH001,Amsterdam Distribution Center,MARKET001,European Consumer Market,0.2374,10.68
+82,PORT_STRIKE,0.58,PORT003,Rotterdam Port,MAN003,Infineon Technologies,PROD003,Automotive Chip,Hamburg-Rotterdam Route,WH001,Amsterdam Distribution Center,MARKET001,European Consumer Market,0.16,7.2
+87,SEVERE_WEATHER,0.57,PORT003,Rotterdam Port,MAN001,TSMC,PROD001,Advanced Semiconductor,Taipei-Rotterdam Route,WH001,Amsterdam Distribution Center,MARKET001,European Consumer Market,0.2649,11.92
+87,SEVERE_WEATHER,0.57,PORT003,Rotterdam Port,MAN002,Samsung Electronics,PROD002,Memory Chip,Shanghai-Rotterdam Route,WH001,Amsterdam Distribution Center,MARKET001,European Consumer Market,0.2707,12.18
+87,SEVERE_WEATHER,0.57,PORT003,Rotterdam Port,MAN004,Foxconn,PROD004,Smartphone,Shanghai-Rotterdam Route,WH001,Amsterdam Distribution Center,MARKET001,European Consumer Market,0.2709,12.19
+87,SEVERE_WEATHER,0.57,PORT003,Rotterdam Port,MAN004,Foxconn,PROD005,Laptop,Shanghai-Rotterdam Route,WH001,Amsterdam Distribution Center,MARKET001,European Consumer Market,0.2709,12.19
+87,SEVERE_WEATHER,0.57,PORT003,Rotterdam Port,MAN003,Infineon Technologies,PROD003,Automotive Chip,Hamburg-Rotterdam Route,WH001,Amsterdam Distribution Center,MARKET001,European Consumer Market,0.1818,8.18
+94,PORT_CLOSURE,0.9,PORT003,Rotterdam Port,MAN001,TSMC,PROD001,Advanced Semiconductor,Taipei-Rotterdam Route,WH001,Amsterdam Distribution Center,MARKET001,European Consumer Market,0.3798,17.09
+94,PORT_CLOSURE,0.9,PORT003,Rotterdam Port,MAN002,Samsung Electronics,PROD002,Memory Chip,Shanghai-Rotterdam Route,WH001,Amsterdam Distribution Center,MARKET001,European Consumer Market,0.3865,17.39
+94,PORT_CLOSURE,0.9,PORT003,Rotterdam Port,MAN004,Foxconn,PROD004,Smartphone,Shanghai-Rotterdam Route,WH001,Amsterdam Distribution Center,MARKET001,European Consumer Market,0.3866,17.4
+94,PORT_CLOSURE,0.9,PORT003,Rotterdam Port,MAN004,Foxconn,PROD005,Laptop,Shanghai-Rotterdam Route,WH001,Amsterdam Distribution Center,MARKET001,European Consumer Market,0.3866,17.4
+94,PORT_CLOSURE,0.9,PORT003,Rotterdam Port,MAN003,Infineon Technologies,PROD003,Automotive Chip,Hamburg-Rotterdam Route,WH001,Amsterdam Distribution Center,MARKET001,European Consumer Market,0.286,12.87
