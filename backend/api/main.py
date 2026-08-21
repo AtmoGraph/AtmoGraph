@@ -9,17 +9,14 @@ from backend.python.graph_loader import (
     create_graph_edges,
 )
 
-from backend.api.prediction import (
-    PredictionRequest,
-    predict_scenario,
-)
-
+from backend.api.nlp_routes import router as nlp_router
 
 app = FastAPI(
     title="AtmoGraph Backend API",
     version="0.1.0",
 )
 
+app.include_router(nlp_router)
 
 # React frontend
 app.add_middleware(
@@ -33,10 +30,14 @@ app.add_middleware(
 )
 
 @app.post("/api/predictions")
-def get_predictions(
-    request: PredictionRequest,
-):
-    return predict_scenario(request)
+def get_predictions(request: dict):
+    from backend.api.prediction import (
+        PredictionRequest,
+        predict_scenario,
+    )
+
+    prediction_request = PredictionRequest(**request)
+    return predict_scenario(prediction_request)
 
 @app.get("/api/health")
 def health_check():

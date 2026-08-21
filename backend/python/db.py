@@ -1,16 +1,39 @@
+import os
+from pathlib import Path
+
+from dotenv import load_dotenv
 from neo4j import GraphDatabase
 
 
-NEO4J_URI = "bolt://localhost:7687"
-NEO4J_USERNAME = "neo4j"
-NEO4J_PASSWORD = "Krishna143"
+PROJECT_ROOT = Path(__file__).resolve().parents[2]
+load_dotenv(PROJECT_ROOT / ".env")
+
+NEO4J_URI = os.getenv("NEO4J_URI")
+NEO4J_USERNAME = os.getenv("NEO4J_USERNAME")
+NEO4J_PASSWORD = os.getenv("NEO4J_PASSWORD")
+NEO4J_DATABASE = os.getenv("NEO4J_DATABASE", "neo4j")
 
 
 class Neo4jConnection:
     def __init__(self):
+        missing = [
+            name
+            for name, value in {
+                "NEO4J_URI": NEO4J_URI,
+                "NEO4J_USERNAME": NEO4J_USERNAME,
+                "NEO4J_PASSWORD": NEO4J_PASSWORD,
+            }.items()
+            if not value
+        ]
+
+        if missing:
+            raise RuntimeError(
+                f"Missing environment variables: {', '.join(missing)}"
+            )
+
         self.driver = GraphDatabase.driver(
             NEO4J_URI,
-            auth=(NEO4J_USERNAME, NEO4J_PASSWORD)
+            auth=(NEO4J_USERNAME, NEO4J_PASSWORD),
         )
 
     def close(self):
