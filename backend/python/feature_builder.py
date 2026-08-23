@@ -86,9 +86,24 @@ def build_feature_vector(node):
         properties.get("cost", 0)
     )
 
-    severity = float(
-        properties.get("severity", 0)
-    )
+    severity_value = properties.get("severity", 0)
+
+    severity_mapping = {
+        "low": 0.2,
+        "medium": 0.5,
+        "high": 0.9,
+        "critical": 1.0,
+    }
+
+    if isinstance(severity_value, str):
+        severity = severity_mapping.get(
+            severity_value.strip().lower(),
+            float(
+                properties.get("risk_score", 0)
+            ),
+        )
+    else:
+        severity = float(severity_value or 0)
 
     delay = float(
         properties.get("expected_delay_days", 0)
