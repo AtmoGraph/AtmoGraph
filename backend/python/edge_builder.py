@@ -11,6 +11,7 @@ RELATIONSHIP_TYPES = [
     "SERVES",
     "DISTRIBUTES_TO",
     "AFFECTS",
+    "SHIPS_TO",
 ]
 
 
