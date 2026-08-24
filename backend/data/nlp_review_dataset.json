@@ -1,0 +1,72 @@
+[
+  {
+    "id": "review-001",
+    "text": "A strike at the Port of Rotterdam has delayed shipments from Nordic Minerals.",
+    "expected_entity_ids": ["port-rotterdam", "supplier-sweden"],
+    "expected_disruption_type": "labour_strike",
+    "expected_risk_level": "high"
+  },
+  {
+    "id": "review-002",
+    "text": "Port congestion at the Port of Singapore is affecting deliveries from Silica Systems.",
+    "expected_entity_ids": ["port-singapore", "supplier-taiwan"],
+    "expected_disruption_type": "port_congestion",
+    "expected_risk_level": "high"
+  },
+  {
+    "id": "review-003",
+    "text": "A severe storm has disrupted Atlas Assembly deliveries to North America DC.",
+    "expected_entity_ids": ["factory-india", "distribution-usa"],
+    "expected_disruption_type": "extreme_weather",
+    "expected_risk_level": "high"
+  },
+  {
+    "id": "review-004",
+    "text": "Nordic Minerals reports reduced capacity affecting Atlas Assembly.",
+    "expected_entity_ids": ["supplier-sweden", "factory-india"],
+    "expected_disruption_type": "capacity_reduction",
+    "expected_risk_level": "medium"
+  },
+  {
+    "id": "review-005",
+    "text": "Shipments to the European Market are delayed.",
+    "expected_entity_ids": ["market-europe"],
+    "expected_disruption_type": "transport_delay",
+    "expected_risk_level": "medium"
+  },
+  {
+    "id": "review-006",
+    "text": "A fire near Singapore Port has interrupted regional operations.",
+    "expected_entity_ids": ["port-singapore"],
+    "expected_disruption_type": "fire_or_explosion",
+    "expected_risk_level": "high"
+  },
+  {
+    "id": "review-007",
+    "text": "A new sanction is affecting exports from Silica Systems.",
+    "expected_entity_ids": ["supplier-taiwan"],
+    "expected_disruption_type": "sanctions",
+    "expected_risk_level": "high"
+  },
+  {
+    "id": "review-008",
+    "text": "Nordic Minerals completed its routine delivery to the European Market.",
+    "expected_entity_ids": ["supplier-sweden", "market-europe"],
+    "expected_disruption_type": "unknown",
+    "expected_risk_level": "low"
+  },
+  {
+    "id": "review-009",
+    "text": "A walkout at Rotterdam Port is affecting Nordic Metals shipments.",
+    "expected_entity_ids": ["port-rotterdam", "supplier-sweden"],
+    "expected_disruption_type": "labour_strike",
+    "expected_risk_level": "high"
+  },
+  {
+    "id": "review-010",
+    "text": "The company reported stable operations with no supply-chain incident.",
+    "expected_entity_ids": [],
+    "expected_disruption_type": "unknown",
+    "expected_risk_level": "low"
+  }
+]

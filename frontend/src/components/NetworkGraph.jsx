@@ -1,5 +1,6 @@
 import { useEffect, useRef } from "react";
 import * as d3 from "d3";
+import LargeNetworkCanvas from "./LargeNetworkCanvas";
 
 const riskColours = {
   low: "#FEB909",
@@ -33,7 +34,7 @@ function getShortName(name = "") {
   return `${name.slice(0, maxLength - 3)}...`;
 }
 
-function NetworkGraph({
+function SvgNetworkGraph({
   selectedNode,
   onSelectNode,
   networkNodes = [],
@@ -337,5 +338,16 @@ function NetworkGraph({
     </div>
   );
 }
+
+function NetworkGraph(props) {
+  const nodeCount = props.networkNodes?.length ?? 0;
+
+  if (nodeCount >= 100) {
+    return <LargeNetworkCanvas {...props} />;
+  }
+
+  return <SvgNetworkGraph {...props} />;
+}
+
 
 export default NetworkGraph;
