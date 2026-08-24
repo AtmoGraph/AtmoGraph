@@ -14,7 +14,13 @@ const riskColours = {
 
 
 function getRisk(node) {
-  const score = Number(node.properties?.risk_score ?? 0);
+  if (node.predictionRisk) {
+    return node.predictionRisk;
+  }
+
+  const score = Number(
+    node.properties?.risk_score ?? 0
+  );
 
   if (score >= 0.25) return "high";
   if (score >= 0.15) return "medium";
@@ -118,6 +124,19 @@ function LargeNetworkCanvas({
         context.arc(node.x, node.y, 7, 0, Math.PI * 2);
         context.fillStyle = riskColours[node.risk];
         context.fill();
+
+        if (Number.isFinite(node.predictionScore)) {
+          context.beginPath();
+          context.arc(node.x, node.y, 11, 0, Math.PI * 2);
+          context.strokeStyle = "#e5c9d7";
+          context.lineWidth = 2 / currentTransform.k;
+          context.setLineDash([
+            5 / currentTransform.k,
+            3 / currentTransform.k,
+          ]);
+          context.stroke();
+          context.setLineDash([]);
+        }
 
         if (node.id === selectedNode?.id) {
           context.strokeStyle = "#e5c9d7";
