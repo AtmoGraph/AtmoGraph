@@ -9,7 +9,13 @@ const riskColours = {
 };
 
 function getRisk(node) {
-  const riskScore = Number(node.properties?.risk_score ?? 0);
+  if (node.predictionRisk) {
+    return node.predictionRisk;
+  }
+
+  const riskScore = Number(
+    node.properties?.risk_score ?? 0
+  );
 
   if (riskScore >= 0.25) return "high";
   if (riskScore >= 0.15) return "medium";
@@ -124,7 +130,15 @@ function SvgNetworkGraph({
       .attr("r", (node) =>
         node.id === selectedNode?.id ? 29 : 24
       )
-      .attr("stroke", (node) => riskColours[node.risk]);
+      .attr("stroke", (node) => riskColours[node.risk])
+      .attr("stroke-width", (node) =>
+        Number.isFinite(node.predictionScore) ? 4 : 2
+      )
+      .attr("stroke-dasharray", (node) =>
+        Number.isFinite(node.predictionScore)
+          ? "6 3"
+          : null
+      );
 
     nodeElements
       .append("circle")
@@ -315,23 +329,34 @@ function SvgNetworkGraph({
         aria-label="Interactive global supply-chain network"
       />
 
-      <div className="network-legend">
-        <span>
-          <i className="legend-dot low" />
-          Stable
-        </span>
+     <div className="network-legend">
+  <span>
+    <i className="legend-dot low" />
+    Stable
+  </span>
 
-        <span>
-          <i className="legend-dot medium" />
-          Watch
-        </span>
+  <span>
+    <i className="legend-dot medium" />
+    Watch
+  </span>
 
-        <span>
-          <i className="legend-dot high" />
-          Critical
-        </span>
-      </div>
+  <span>
+    <i className="legend-dot high" />
+    Critical
+  </span>
 
+  <span>
+    <i
+      className="legend-dot"
+      style={{
+        background: "transparent",
+        border: "2px dashed #e5c9d7",
+        boxSizing: "border-box",
+      }}
+    />
+    ML prediction
+  </span>
+</div>
       <div className="network-help">
         Scroll to zoom · Drag empty space to pan · Drag node to move · Click node for details
       </div>
@@ -348,6 +373,5 @@ function NetworkGraph(props) {
 
   return <SvgNetworkGraph {...props} />;
 }
-
 
 export default NetworkGraph;

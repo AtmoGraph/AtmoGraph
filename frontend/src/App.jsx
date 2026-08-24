@@ -1,4 +1,9 @@
-import { useCallback, useEffect, useState } from "react";
+import {
+  useCallback,
+  useEffect,
+  useMemo,
+  useState,
+} from "react";
 import {
   Activity,
   AlertTriangle,
@@ -74,6 +79,45 @@ function App() {
   const [predictions, setPredictions] = useState([]);
   const [predictionLoading, setPredictionLoading] = useState(true);
   const [predictionError, setPredictionError] = useState("");
+
+  const predictionByNodeId = useMemo(
+  () =>
+    new Map(
+      predictions.map((item) => [
+        item.node_id,
+        Number(item.prediction),
+      ])
+    ),
+  [predictions]
+);
+
+const overlayNetworkNodes = useMemo(
+  () =>
+    networkNodes.map((node) => {
+      const predictionScore = predictionByNodeId.get(
+        node.id
+      );
+
+      if (!Number.isFinite(predictionScore)) {
+        return node;
+      }
+
+      let predictionRisk = "low";
+
+      if (predictionScore >= 0.3) {
+        predictionRisk = "high";
+      } else if (predictionScore >= 0.2) {
+        predictionRisk = "medium";
+      }
+
+      return {
+        ...node,
+        predictionScore,
+        predictionRisk,
+      };
+    }),
+  [networkNodes, predictionByNodeId]
+);
 
   const activeNodes = networkNodes.length;
 
@@ -220,10 +264,10 @@ function App() {
         const data = await response.json();
 
         setPredictions(
-          (data.top_impacted_nodes || [])
-            .filter((item) => item.node_type !== "Disruption")
-            .slice(0, 6)
-        );
+  (data.top_impacted_nodes || []).filter(
+    (item) => item.node_type !== "Disruption"
+  )
+);
       } catch (error) {
         console.error("Prediction API error:", error);
         setPredictionError("Unable to load AI predictions");
@@ -386,7 +430,7 @@ function App() {
               <NetworkGraph
                 selectedNode={selectedNode}
                 onSelectNode={handleSelectNode}
-                networkNodes={networkNodes}
+                networkNodes={overlayNetworkNodes}
                 networkEdges={networkEdges}
               />
 
@@ -402,13 +446,22 @@ function App() {
                   </div>
 
                   {selectedNode && (
-                    <span
-                      className={`risk-badge ${selectedNode.risk || "low"
-                        }`}
-                    >
-                      {selectedNode.risk || "unknown"} risk
-                    </span>
-                  )}
+  <span
+    className={`risk-badge ${
+      selectedNode.predictionRisk ||
+      selectedNode.risk ||
+      "low"
+    }`}
+  >
+    {Number.isFinite(selectedNode.predictionScore)
+      ? "ML "
+      : ""}
+    {selectedNode.predictionRisk ||
+      selectedNode.risk ||
+      "unknown"}{" "}
+    risk
+  </span>
+)}
                 </div>
 
                 {selectedNode ? (
@@ -438,20 +491,27 @@ function App() {
                     </div>
 
                     <div className="detail-item">
-                      <span>Risk Score</span>
-                      <strong>
-                        {selectedNode.properties?.risk_score ?? "N/A"}
-                      </strong>
-                    </div>
+  <span>Risk Score</span>
+  <strong>
+    {selectedNode.properties?.risk_score ?? "N/A"}
+  </strong>
+</div>
 
-                    <div className="detail-item">
-                      <span>Capacity</span>
-                      <strong>
-                        {formatCapacity(
-                          selectedNode.properties?.capacity
-                        )}
-                      </strong>
-                    </div>
+{Number.isFinite(selectedNode.predictionScore) && (
+  <div className="detail-item">
+    <span>ML Impact</span>
+    <strong>
+      {(selectedNode.predictionScore * 100).toFixed(2)}%
+    </strong>
+  </div>
+)}
+
+<div className="detail-item">
+  <span>Capacity</span>
+  <strong>
+    {formatCapacity(selectedNode.properties?.capacity)}
+  </strong>
+</div>
                   </div>
                 ) : (
                   <div className="empty-details">
@@ -578,7 +638,7 @@ function App() {
 
                   {!predictionLoading &&
                     !predictionError &&
-                    predictions.map((item, index) => {
+                    predictions.slice(0, 6).map((item, index) => {
                       const percentage = Math.min(
                         100,
                         Math.max(0, Number(item.prediction) * 100)
