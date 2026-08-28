@@ -1,0 +1,478 @@
+/* Week 4 control-room presentation layer.
+   Imported after App.css so the stable graph/component styles stay intact. */
+
+:root {
+  --control-bg: #071426;
+  --control-surface: rgba(10, 29, 52, 0.96);
+  --control-surface-2: rgba(13, 37, 66, 0.94);
+  --control-border: rgba(116, 164, 211, 0.28);
+  --control-blue: #72b7f2;
+  --control-cyan: #65d8e8;
+  --control-warning: #ff9b45;
+  --control-danger: #ff6969;
+  --control-text: #f1dce7;
+  --control-muted: #8ca9c7;
+}
+
+body {
+  overflow-x: hidden;
+  background: var(--control-bg);
+}
+
+.app-shell {
+  min-height: 100vh;
+  display: block;
+  background:
+    radial-gradient(circle at 52% 35%, rgba(43, 90, 132, 0.18), transparent 35%),
+    linear-gradient(180deg, #071426 0%, #06111f 100%);
+}
+
+.sidebar {
+  display: none;
+}
+
+.main-content {
+  min-width: 0;
+}
+
+.topbar {
+  position: sticky;
+  top: 0;
+  z-index: 50;
+  min-height: 70px;
+  display: grid;
+  grid-template-columns: minmax(190px, 0.85fr) minmax(230px, 1.2fr) auto auto auto;
+  align-items: center;
+  gap: 14px;
+  padding: 10px 22px;
+  border-bottom: 1px solid var(--control-border);
+  background: rgba(5, 17, 31, 0.94);
+  -webkit-backdrop-filter: blur(16px);
+  backdrop-filter: blur(16px);
+}
+
+.control-room-title {
+  min-width: 0;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.control-room-title > div {
+  min-width: 0;
+  display: grid;
+  gap: 2px;
+}
+
+.control-room-title strong {
+  overflow: hidden;
+  color: var(--control-text);
+  font-size: 0.95rem;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.control-room-title small {
+  color: var(--control-muted);
+  font-size: 0.67rem;
+}
+
+.search-box {
+  width: 100%;
+  min-width: 0;
+  height: 42px;
+  margin: 0;
+  border: 1px solid var(--control-border);
+  background: rgba(11, 32, 59, 0.85);
+}
+
+.timeline-control {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 6px 8px 6px 11px;
+  border: 1px solid rgba(114, 183, 242, 0.38);
+  border-radius: 10px;
+  background: rgba(12, 35, 61, 0.9);
+}
+
+.timeline-control-heading {
+  display: grid;
+  gap: 1px;
+}
+
+.timeline-control-heading span {
+  color: var(--control-text);
+  font-size: 0.72rem;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.timeline-control-heading small {
+  color: var(--control-warning);
+  font-size: 0.58rem;
+  text-transform: uppercase;
+}
+
+.timeline-options {
+  display: flex;
+  gap: 4px;
+}
+
+.timeline-options button {
+  min-width: 42px;
+  padding: 7px 8px;
+  border: 1px solid transparent;
+  border-radius: 7px;
+  color: var(--control-muted);
+  background: rgba(4, 17, 31, 0.72);
+  font: inherit;
+  font-size: 0.7rem;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.timeline-options button:hover,
+.timeline-options button.active {
+  border-color: rgba(101, 216, 232, 0.55);
+  color: #e8fbff;
+  background: rgba(49, 117, 153, 0.42);
+  box-shadow: 0 0 14px rgba(101, 216, 232, 0.16);
+}
+
+.notification-button,
+.user-profile {
+  margin: 0;
+}
+
+.account-button { border: 0; color: inherit; background: transparent; font: inherit; text-align: left; cursor: pointer; }
+.account-button:hover { opacity: .82; }
+.account-menu-wrap { position: relative; min-width: 0; }
+.account-menu { position: absolute; z-index: 90; top: calc(100% + 10px); right: 0; width: 230px; overflow: hidden; border: 1px solid var(--control-border); border-radius: 11px; background: #091d32; box-shadow: 0 18px 45px rgba(0,0,0,.42); }
+.account-menu-user { display: grid; gap: 3px; padding: 13px 14px; border-bottom: 1px solid var(--control-border); }
+.account-menu-user strong { color: var(--control-text); font-size: .8rem; }
+.account-menu-user span { overflow: hidden; color: var(--control-muted); font-size: .66rem; text-overflow: ellipsis; white-space: nowrap; }
+.account-menu > button { width: 100%; padding: 11px 14px; border: 0; color: #ff9999; background: transparent; font: inherit; font-size: .76rem; font-weight: 750; text-align: left; cursor: pointer; }
+.account-menu > button:hover, .account-menu > button:focus-visible { color: #fff; background: rgba(255,105,105,.16); outline: none; }
+
+.dashboard {
+  width: 100%;
+  max-width: none;
+  min-height: calc(100vh - 70px);
+  padding: 14px 18px 18px;
+}
+
+.dashboard-heading {
+  min-height: 46px;
+  display: flex;
+  align-items: center;
+  gap: 18px;
+  margin: 0 0 12px;
+  padding: 0 2px;
+}
+
+.dashboard-heading h1 {
+  margin: 1px 0 0;
+  font-size: clamp(1.2rem, 2vw, 1.7rem);
+}
+
+.dashboard-heading p {
+  display: none;
+}
+
+.dashboard-heading .live-status {
+  margin-left: auto;
+}
+
+.summary-grid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 8px;
+  margin: 0 0 12px;
+}
+
+.summary-card {
+  min-height: 74px;
+  padding: 10px 12px;
+  border-color: var(--control-border);
+  border-radius: 10px;
+  background: linear-gradient(145deg, rgba(15, 42, 74, 0.95), rgba(8, 26, 48, 0.96));
+}
+
+.summary-card-heading {
+  margin-bottom: 3px;
+}
+
+.summary-card > strong {
+  font-size: 1.2rem;
+}
+
+.summary-card p {
+  margin-top: 1px;
+  font-size: 0.62rem;
+}
+
+.control-room-grid {
+  position: relative;
+  min-height: 690px;
+  display: grid;
+  grid-template-columns: minmax(190px, 0.68fr) minmax(380px, 2fr) minmax(220px, 0.86fr);
+  grid-template-rows: minmax(410px, 1fr) minmax(220px, auto);
+  grid-template-areas:
+    "threats map prediction"
+    "exposure map details";
+  gap: 10px;
+}
+
+.network-panel {
+  display: contents;
+}
+
+.network-panel > .panel-heading {
+  z-index: 4;
+  grid-area: map;
+  align-self: start;
+  min-height: 58px;
+  border: 1px solid var(--control-border);
+  border-radius: 12px 12px 0 0;
+  background: rgba(13, 37, 66, 0.96);
+}
+
+.network-panel .network-canvas {
+  grid-area: map;
+  min-height: 0;
+  height: 100%;
+  overflow: hidden;
+  border: 1px solid var(--control-border);
+  border-radius: 12px;
+  background:
+    radial-gradient(circle at 50% 45%, rgba(55, 105, 146, 0.16), transparent 42%),
+    var(--control-surface);
+}
+
+.network-panel .network-svg {
+  min-height: 620px;
+  height: 100% !important;
+}
+
+.geo-network { position: relative; background: #081727 !important; }
+.geo-map { display: block; width: 100%; }
+.geo-stage { transform-box: fill-box; transform-origin: center; transition: transform 180ms ease; }
+.geo-sphere { fill: #0b1d2e !important; stroke: #39536a; stroke-width: 1; }
+.geo-countries .geo-country { fill: #354c60 !important; stroke: #718698 !important; stroke-width: .55 !important; opacity: .96; vector-effect: non-scaling-stroke; }
+.geo-countries .geo-country:hover { fill: #415d74 !important; }
+.geo-grid path { fill: none; stroke: rgba(112, 164, 200, .08); stroke-width: 1; }
+.geo-route { fill: none; stroke: rgba(139, 204, 241, .54); stroke-width: 1.35; vector-effect: non-scaling-stroke; }
+.geo-route:nth-child(3n) { stroke: rgba(255, 106, 106, .68); }
+.geo-node { cursor: pointer; outline: none; }
+.geo-node .node-pulse { fill: currentColor; opacity: .18; stroke: currentColor; stroke-width: 1; }
+.geo-node .node-core { fill: currentColor; stroke: #e9fbff; stroke-width: 1.2; }
+.geo-node text { fill: #e9f4ff; font-size: 11px; font-weight: 650; paint-order: stroke; stroke: #081727; stroke-width: 3px; stroke-linejoin: round; pointer-events: none; }
+.geo-node.low { color: #68c9ff; }
+.geo-node.medium { color: #ffad42; }
+.geo-node.high, .geo-node.critical { color: #ff6767; }
+.geo-node.selected .node-pulse { opacity: .34; animation: map-pulse 1.8s infinite; }
+@keyframes map-pulse { 50% { r: 23; opacity: .08; } }
+.geo-controls { position: absolute; z-index: 7; top: 72px; left: 14px; display: flex; gap: 5px; }
+.geo-controls button { min-width: 34px; height: 32px; padding: 0 10px; border: 1px solid var(--control-border); border-radius: 7px; color: #d9edff; background: rgba(8, 26, 46, .92); font: inherit; font-weight: 750; cursor: pointer; }
+.geo-controls button:hover { border-color: var(--control-cyan); background: rgba(27, 69, 98, .96); }
+.geo-legend { position: absolute; z-index: 6; bottom: 14px; left: 50%; display: flex; gap: 18px; padding: 8px 13px; border: 1px solid var(--control-border); border-radius: 8px; color: var(--control-muted); background: rgba(5, 18, 33, .88); transform: translateX(-50%); font-size: .65rem; }
+.geo-legend span::before { content: ""; display: inline-block; width: 7px; height: 7px; margin-right: 6px; border-radius: 50%; background: #68c9ff; }
+.geo-legend .watch::before { background: #ffad42; }
+.geo-legend .critical::before { background: #ff6767; }
+
+.network-panel > .supplier-details-panel {
+  position: static;
+  grid-area: details;
+  width: auto;
+  max-height: none;
+  overflow: auto;
+  margin: 0;
+  border: 1px solid rgba(114, 183, 242, 0.32);
+  border-radius: 10px;
+  background: rgba(5, 18, 33, 0.94);
+  box-shadow: 0 14px 34px rgba(0, 0, 0, 0.34);
+  -webkit-backdrop-filter: blur(12px);
+  backdrop-filter: blur(12px);
+}
+
+.supplier-details-panel .panel-heading {
+  min-height: 0;
+  padding: 12px 14px;
+}
+
+.supplier-details-panel .details-grid {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 7px;
+  padding: 0 12px 12px;
+}
+
+.supplier-details-panel .detail-item {
+  min-height: 54px;
+  padding: 8px 9px;
+}
+
+.side-panels {
+  display: contents;
+}
+
+.disruptions-panel {
+  grid-area: threats;
+  min-height: 0;
+  overflow: hidden;
+  border-color: var(--control-border);
+  background: var(--control-surface);
+}
+
+.disruption-list {
+  max-height: none;
+  overflow-y: auto;
+}
+
+.disruption-item {
+  border-left: 2px solid var(--control-warning);
+}
+
+.disruption-item.critical {
+  border-left-color: var(--control-danger);
+}
+
+.prediction-panel {
+  grid-area: prediction;
+  min-height: 0;
+  overflow: hidden;
+  border-color: var(--control-border);
+  background: var(--control-surface);
+}
+
+.prediction-list {
+  max-height: 430px;
+  overflow-y: auto;
+}
+
+.exposure-panel {
+  grid-area: exposure;
+  min-height: 0;
+  border-color: var(--control-border);
+  background: var(--control-surface);
+}
+
+.panel-heading {
+  padding: 12px 14px;
+}
+
+.panel-heading h2 {
+  font-size: 0.95rem;
+}
+
+.panel-heading p {
+  font-size: 0.66rem;
+}
+
+.search-results {
+  position: fixed;
+  z-index: 80;
+  top: 66px;
+  left: 50%;
+  width: min(520px, calc(100vw - 32px));
+  max-height: 360px;
+  overflow-y: auto;
+  transform: translateX(-50%);
+  box-shadow: 0 18px 50px rgba(0, 0, 0, 0.48);
+}
+
+@media (max-width: 880px) {
+  .topbar {
+    grid-template-columns: minmax(180px, 1fr) minmax(220px, 1.3fr) auto auto;
+  }
+
+  .control-room-title small,
+  .user-profile {
+    display: none;
+  }
+
+  .control-room-grid {
+    grid-template-columns: minmax(210px, 0.7fr) minmax(430px, 1.7fr);
+    grid-template-rows: minmax(560px, auto) auto auto;
+    grid-template-areas:
+      "threats map"
+      "prediction prediction"
+      "details details"
+      "exposure exposure";
+  }
+
+  .prediction-panel {
+    min-height: 0;
+  }
+
+  .network-panel .network-canvas {
+    min-height: 560px;
+  }
+}
+
+@media (max-width: 760px) {
+  .topbar {
+    position: relative;
+    grid-template-columns: 1fr auto;
+    gap: 8px;
+    padding: 10px 12px;
+  }
+
+  .control-room-title {
+    grid-column: 1 / -1;
+  }
+
+  .search-box {
+    grid-column: 1 / -1;
+    grid-row: 2;
+  }
+
+  .timeline-control {
+    grid-column: 1 / -1;
+    justify-content: space-between;
+  }
+
+  .notification-button,
+  .user-profile {
+    display: none;
+  }
+
+  .dashboard {
+    padding: 10px;
+  }
+
+  .dashboard-heading {
+    align-items: flex-start;
+  }
+
+  .dashboard-heading .live-status {
+    margin-left: 0;
+  }
+
+  .summary-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .control-room-grid {
+    display: flex;
+    min-height: 0;
+    flex-direction: column;
+  }
+
+  .network-panel .network-svg {
+    min-height: 500px;
+  }
+
+  .network-panel > .supplier-details-panel {
+    width: auto;
+    max-height: none;
+    margin: 10px;
+  }
+
+  .disruptions-panel,
+  .exposure-panel,
+  .prediction-panel {
+    min-height: 0;
+  }
+}

@@ -1,353 +1,67 @@
-import { useEffect, useRef } from "react";
-import * as d3 from "d3";
-import LargeNetworkCanvas from "./LargeNetworkCanvas";
+import { useMemo, useState } from "react";
+import { geoNaturalEarth1, geoPath } from "d3-geo";
+import { feature } from "topojson-client";
+import world from "world-atlas/countries-110m.json";
 
-const riskColours = {
-  low: "#FEB909",
-  medium: "#fe8309",
-  high: "#832A1A",
+const LOCATION_COORDS = {
+  rotterdam: [4.48, 51.92], netherlands: [5.29, 52.13], europe: [15, 50], london: [-0.13, 51.51],
+  hamburg: [9.99, 53.55], shanghai: [121.47, 31.23], shenzhen: [114.06, 22.54], china: [104.2, 35.9],
+  singapore: [103.82, 1.35], mumbai: [72.88, 19.08], india: [78.96, 20.59], tokyo: [139.69, 35.68],
+  japan: [138.25, 36.2], dubai: [55.27, 25.2], sydney: [151.21, -33.87], australia: [133.78, -25.27],
+  newyork: [-74.01, 40.71], "new york": [-74.01, 40.71], losangeles: [-118.24, 34.05],
+  "los angeles": [-118.24, 34.05], usa: [-98.58, 39.83], america: [-98.58, 39.83],
+  brazil: [-51.93, -14.24], sao: [-46.63, -23.55], cape: [18.42, -33.93], africa: [20, 2], kolkata: [88.36, 22.57],
 };
 
-function getRisk(node) {
-  const riskScore = Number(node.properties?.risk_score ?? 0);
+const projection = geoNaturalEarth1().fitExtent([[28, 32], [972, 488]], { type: "Sphere" });
+const mapPath = geoPath(projection);
+const countries = feature(world, world.objects.countries).features;
 
-  if (riskScore >= 0.25) return "high";
-  if (riskScore >= 0.15) return "medium";
-  return "low";
+function project(coordinates) { return projection(coordinates) || [500, 260]; }
+function endpointId(endpoint) { return typeof endpoint === "object" ? endpoint.id : endpoint; }
+function nodePoint(node, index, total) {
+  const text = `${node.name || ""} ${node.location || ""} ${node.country || ""}`.toLowerCase();
+  const match = Object.entries(LOCATION_COORDS).find(([key]) => text.includes(key));
+  if (match) return project(match[1]);
+  const angle = (index / Math.max(total, 1)) * Math.PI * 2 - Math.PI / 2;
+  return [500 + Math.cos(angle) * 275, 250 + Math.sin(angle) * 145];
 }
 
-function getLocation(node) {
+export default function NetworkGraph({ networkNodes = [], networkEdges = [], selectedNode, onSelectNode }) {
+  const [zoom, setZoom] = useState(1);
+  const points = useMemo(() => new Map(networkNodes.map((node, index) => [node.id, nodePoint(node, index, networkNodes.length)])), [networkNodes]);
   return (
-    node.properties?.country ||
-    node.properties?.region ||
-    "Unknown"
-  );
-}
-
-function getShortName(name = "") {
-  const maxLength = 22;
-
-  if (name.length <= maxLength) {
-    return name;
-  }
-
-  return `${name.slice(0, maxLength - 3)}...`;
-}
-
-function SvgNetworkGraph({
-  selectedNode,
-  onSelectNode,
-  networkNodes = [],
-  networkEdges = [],
-}) {
-  const svgRef = useRef(null);
-  const zoomRef = useRef(null);
-
-  useEffect(() => {
-    const width = 900;
-    const height = 520;
-
-    if (!networkNodes.length) return;
-
-    const nodes = networkNodes.map((node) => ({
-      ...node,
-      risk: getRisk(node),
-      location: getLocation(node),
-      shortName: getShortName(node.name),
-    }));
-
-    const nodeIds = new Set(nodes.map((node) => node.id));
-
-    const links = networkEdges
-      .filter(
-        (edge) =>
-          nodeIds.has(edge.source) &&
-          nodeIds.has(edge.target)
-      )
-      .map((edge) => ({ ...edge }));
-
-    const svg = d3.select(svgRef.current);
-
-    svg.selectAll("*").remove();
-
-    svg
-      .attr("viewBox", `0 0 ${width} ${height}`)
-      .attr("preserveAspectRatio", "xMidYMid meet");
-
-    const graphLayer = svg
-      .append("g")
-      .attr("class", "graph-layer");
-
-    const linkElements = graphLayer
-      .append("g")
-      .attr("class", "network-links")
-      .selectAll("line")
-      .data(links)
-      .join("line")
-      .attr("class", "network-link");
-
-    const nodeElements = graphLayer
-      .append("g")
-      .attr("class", "network-nodes")
-      .selectAll("g")
-      .data(nodes)
-      .join("g")
-      .attr("class", "network-node")
-      .attr("tabindex", 0)
-      .attr("role", "button")
-      .attr(
-        "aria-label",
-        (node) =>
-          `${node.name}, ${node.type}, ${node.risk} risk`
-      )
-      .on("click", (event, node) => {
-        event.stopPropagation();
-        onSelectNode(node);
-      })
-      .on("keydown", (event, node) => {
-        if (event.key === "Enter" || event.key === " ") {
-          event.preventDefault();
-          onSelectNode(node);
-        }
-      });
-
-    nodeElements
-      .append("title")
-      .text(
-        (node) =>
-          `${node.name}\nType: ${node.type}\nLocation: ${node.location}\nRisk: ${node.risk}`
-      );
-
-    nodeElements
-      .append("circle")
-      .attr("class", "node-halo")
-      .attr("r", (node) =>
-        node.id === selectedNode?.id ? 29 : 24
-      )
-      .attr("stroke", (node) => riskColours[node.risk]);
-
-    nodeElements
-      .append("circle")
-      .attr("class", "node-core")
-      .attr("r", 14)
-      .attr("fill", (node) => riskColours[node.risk]);
-
-    nodeElements
-      .append("text")
-      .attr("class", "node-name")
-      .attr("text-anchor", "middle")
-      .attr("y", 42)
-      .text((node) => node.shortName);
-
-    nodeElements
-      .append("text")
-      .attr("class", "node-location")
-      .attr("text-anchor", "middle")
-      .attr("y", 58)
-      .text((node) => node.location);
-
-    const simulation = d3
-      .forceSimulation(nodes)
-      .force(
-        "link",
-        d3
-          .forceLink(links)
-          .id((node) => node.id)
-          .distance(175)
-          .strength(0.7)
-      )
-      .force(
-        "charge",
-        d3.forceManyBody().strength(-900)
-      )
-      .force(
-        "center",
-        d3.forceCenter(width / 2, height / 2)
-      )
-      .force(
-        "collision",
-        d3.forceCollide().radius(82).strength(1)
-      )
-      .force(
-        "x",
-        d3.forceX(width / 2).strength(0.025)
-      )
-      .force(
-        "y",
-        d3.forceY(height / 2).strength(0.025)
-      );
-
-    nodeElements.call(
-      d3
-        .drag()
-        .on("start", (event, node) => {
-          event.sourceEvent.stopPropagation();
-
-          if (!event.active) {
-            simulation.alphaTarget(0.3).restart();
-          }
-
-          node.fx = node.x;
-          node.fy = node.y;
-        })
-        .on("drag", (event, node) => {
-          node.fx = event.x;
-          node.fy = event.y;
-        })
-        .on("end", (event, node) => {
-          if (!event.active) {
-            simulation.alphaTarget(0);
-          }
-
-          node.fx = null;
-          node.fy = null;
-        })
-    );
-
-    simulation.on("tick", () => {
-      const horizontalPadding = 105;
-      const verticalPadding = 70;
-
-      nodes.forEach((node) => {
-        node.x = Math.max(
-          horizontalPadding,
-          Math.min(width - horizontalPadding, node.x)
-        );
-
-        node.y = Math.max(
-          verticalPadding,
-          Math.min(height - verticalPadding, node.y)
-        );
-      });
-
-      linkElements
-        .attr("x1", (link) => link.source.x)
-        .attr("y1", (link) => link.source.y)
-        .attr("x2", (link) => link.target.x)
-        .attr("y2", (link) => link.target.y);
-
-      nodeElements.attr(
-        "transform",
-        (node) => `translate(${node.x}, ${node.y})`
-      );
-    });
-
-    const zoomBehavior = d3
-      .zoom()
-      .scaleExtent([0.45, 2.5])
-      .on("zoom", (event) => {
-        graphLayer.attr("transform", event.transform);
-      });
-
-    zoomRef.current = zoomBehavior;
-
-    svg.call(zoomBehavior);
-
-    // Keep node clicks from being treated as double-click zoom.
-    svg.on("dblclick.zoom", null);
-
-    return () => {
-      simulation.stop();
-      svg.on(".zoom", null);
-      zoomRef.current = null;
-    };
-  }, [
-    networkNodes,
-    networkEdges,
-    selectedNode,
-    onSelectNode,
-  ]);
-
-  const zoomBy = (factor) => {
-    if (!svgRef.current || !zoomRef.current) return;
-
-    d3.select(svgRef.current)
-      .transition()
-      .duration(200)
-      .call(zoomRef.current.scaleBy, factor);
-  };
-
-  const resetZoom = () => {
-    if (!svgRef.current || !zoomRef.current) return;
-
-    d3.select(svgRef.current)
-      .transition()
-      .duration(250)
-      .call(
-        zoomRef.current.transform,
-        d3.zoomIdentity
-      );
-  };
-
-  return (
-    <div className="network-canvas">
-      <div className="network-controls">
-        <button
-          type="button"
-          onClick={() => zoomBy(1.2)}
-          aria-label="Zoom in"
-          title="Zoom in"
-        >
-          +
-        </button>
-
-        <button
-          type="button"
-          onClick={() => zoomBy(0.8)}
-          aria-label="Zoom out"
-          title="Zoom out"
-        >
-          −
-        </button>
-
-        <button
-          type="button"
-          onClick={resetZoom}
-          title="Reset graph view"
-        >
-          Reset
-        </button>
+    <div className="network-canvas geo-network">
+      <div className="geo-controls" aria-label="Map zoom controls">
+        <button type="button" onClick={() => setZoom((value) => Math.min(1.7, value + 0.15))} aria-label="Zoom in">+</button>
+        <button type="button" onClick={() => setZoom((value) => Math.max(0.75, value - 0.15))} aria-label="Zoom out">−</button>
+        <button type="button" onClick={() => setZoom(1)}>Reset</button>
       </div>
-
-      <svg
-        ref={svgRef}
-        className="network-svg"
-        aria-label="Interactive global supply-chain network"
-      />
-
-      <div className="network-legend">
-        <span>
-          <i className="legend-dot low" />
-          Stable
-        </span>
-
-        <span>
-          <i className="legend-dot medium" />
-          Watch
-        </span>
-
-        <span>
-          <i className="legend-dot high" />
-          Critical
-        </span>
-      </div>
-
-      <div className="network-help">
-        Scroll to zoom · Drag empty space to pan · Drag node to move · Click node for details
-      </div>
+      <svg className="network-svg geo-map" viewBox="0 0 1000 520" role="img" aria-label="Geographic supply-chain network map">
+        <defs><filter id="nodeGlow"><feGaussianBlur stdDeviation="5" result="blur"/><feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge></filter><linearGradient id="oceanGlow"><stop stopColor="#17334c"/><stop offset="1" stopColor="#081727"/></linearGradient></defs>
+        <rect width="1000" height="520" fill="url(#oceanGlow)" />
+        <g className="geo-grid"><path d="M0 130H1000M0 260H1000M0 390H1000M250 0V520M500 0V520M750 0V520" /></g>
+        <g style={{ transform: `translate(500px,260px) scale(${zoom}) translate(-500px,-260px)` }} className="geo-stage">
+          <path className="geo-sphere" d={mapPath({ type: "Sphere" })} />
+          <g className="geo-countries">{countries.map((country) => <path className="geo-country" d={mapPath(country)} key={country.id} />)}</g>
+          <g>{networkEdges.map((edge, index) => {
+            const source = points.get(endpointId(edge.source ?? edge.from ?? edge.start));
+            const target = points.get(endpointId(edge.target ?? edge.to ?? edge.end));
+            if (!source || !target) return null;
+            const mx = (source[0] + target[0]) / 2;
+            const my = Math.min(source[1], target[1]) - Math.max(28, Math.abs(target[0] - source[0]) * 0.13);
+            return <path className="geo-route" d={`M${source[0]} ${source[1]} Q${mx} ${my} ${target[0]} ${target[1]}`} key={edge.id || index} />;
+          })}</g>
+          <g>{networkNodes.map((node) => {
+            const [x, y] = points.get(node.id);
+            const risk = String(node.predictionRisk || node.risk || "low").toLowerCase();
+            const selected = selectedNode?.id === node.id;
+            const select = () => onSelectNode?.(node);
+            return <g className={`geo-node ${risk}${selected ? " selected" : ""}`} key={node.id} transform={`translate(${x} ${y})`} onClick={select} role="button" tabIndex="0" onKeyDown={(event) => { if (event.key === "Enter" || event.key === " ") select(); }}><circle className="node-pulse" r={selected ? 18 : 13}/><circle className="node-core" r={selected ? 7 : 5} filter="url(#nodeGlow)"/><text x="10" y="-9">{node.name || node.location || node.id}</text></g>;
+          })}</g>
+        </g>
+      </svg>
+      <div className="geo-legend"><span>Stable</span><span className="watch">Watch</span><span className="critical">Critical</span></div>
     </div>
   );
 }
-
-function NetworkGraph(props) {
-  const nodeCount = props.networkNodes?.length ?? 0;
-
-  if (nodeCount >= 100) {
-    return <LargeNetworkCanvas {...props} />;
-  }
-
-  return <SvgNetworkGraph {...props} />;
-}
-
-
-export default NetworkGraph;

@@ -1,4 +1,9 @@
-import { useCallback, useEffect, useState } from "react";
+import {
+  useCallback,
+  useEffect,
+  useMemo,
+  useState,
+} from "react";
 import {
   Activity,
   AlertTriangle,
@@ -13,7 +18,9 @@ import {
 } from "lucide-react";
 
 import NetworkGraph from "./components/NetworkGraph";
+import { apiFetch, useAuth } from "./auth";
 import "./App.css";
+import "./ControlRoom.css";
 
 const exposureData = [
   { label: "Ports", count: 8, percentage: 86 },
@@ -63,10 +70,11 @@ function formatDisruptionTime(disruption) {
 }
 
 function App() {
+  const { user, logout } = useAuth();
+  const [accountMenuOpen, setAccountMenuOpen] = useState(false);
   const [networkNodes, setNetworkNodes] = useState([]);
   const [networkEdges, setNetworkEdges] = useState([]);
   const [selectedNode, setSelectedNode] = useState(null);
-  const [backendStatus, setBackendStatus] = useState("Checking...");
   const [searchTerm, setSearchTerm] = useState("");
   const [disruptions, setDisruptions] = useState([]);
   const [disruptionsLoading, setDisruptionsLoading] = useState(true);
@@ -74,6 +82,46 @@ function App() {
   const [predictions, setPredictions] = useState([]);
   const [predictionLoading, setPredictionLoading] = useState(true);
   const [predictionError, setPredictionError] = useState("");
+  const [previewHorizon, setPreviewHorizon] = useState(30);
+
+  const predictionByNodeId = useMemo(
+  () =>
+    new Map(
+      predictions.map((item) => [
+        item.node_id,
+        Number(item.prediction),
+      ])
+    ),
+  [predictions]
+);
+
+const overlayNetworkNodes = useMemo(
+  () =>
+    networkNodes.map((node) => {
+      const predictionScore = predictionByNodeId.get(
+        node.id
+      );
+
+      if (!Number.isFinite(predictionScore)) {
+        return node;
+      }
+
+      let predictionRisk = "low";
+
+      if (predictionScore >= 0.3) {
+        predictionRisk = "high";
+      } else if (predictionScore >= 0.2) {
+        predictionRisk = "medium";
+      }
+
+      return {
+        ...node,
+        predictionScore,
+        predictionRisk,
+      };
+    }),
+  [networkNodes, predictionByNodeId]
+);
 
   const activeNodes = networkNodes.length;
 
@@ -123,20 +171,13 @@ function App() {
   useEffect(() => {
     const loadBackendData = async () => {
       try {
-        const healthResponse = await fetch(
-          "http://localhost:8001/api/health"
-        );
+        const healthResponse = await apiFetch("/api/health");
 
         if (!healthResponse.ok) {
           throw new Error("Backend health check failed");
         }
 
-        const healthData = await healthResponse.json();
-        setBackendStatus(healthData.status);
-
-        const graphResponse = await fetch(
-          "http://localhost:8001/api/graph"
-        );
+        const graphResponse = await apiFetch("/api/graph");
 
         if (!graphResponse.ok) {
           throw new Error("Graph API request failed");
@@ -156,7 +197,6 @@ function App() {
         );
       } catch (error) {
         console.error("Backend connection error:", error);
-        setBackendStatus("offline");
       }
     };
 
@@ -169,9 +209,7 @@ function App() {
         setDisruptionsLoading(true);
         setDisruptionsError("");
 
-        const response = await fetch(
-          "http://localhost:8001/api/disruptions"
-        );
+        const response = await apiFetch("/api/disruptions");
 
         if (!response.ok) {
           throw new Error("Disruptions API request failed");
@@ -198,8 +236,8 @@ function App() {
         setPredictionLoading(true);
         setPredictionError("");
 
-        const response = await fetch(
-          "http://localhost:8001/api/predictions",
+        const response = await apiFetch(
+          "/api/predictions",
           {
             method: "POST",
             headers: {
@@ -220,10 +258,10 @@ function App() {
         const data = await response.json();
 
         setPredictions(
-          (data.top_impacted_nodes || [])
-            .filter((item) => item.node_type !== "Disruption")
-            .slice(0, 6)
-        );
+  (data.top_impacted_nodes || []).filter(
+    (item) => item.node_type !== "Disruption"
+  )
+);
       } catch (error) {
         console.error("Prediction API error:", error);
         setPredictionError("Unable to load AI predictions");
@@ -303,6 +341,13 @@ function App() {
 
       <main className="main-content">
         <header className="topbar">
+          <div className="control-room-title">
+            <span className="status-dot" />
+            <div>
+              <strong>Operational control room</strong>
+            </div>
+          </div>
+
           <label className="search-box">
             <Search size={17} />
 
@@ -320,13 +365,46 @@ function App() {
             <span />
           </button>
 
-          <div className="user-profile">
-            <div className="avatar">AS</div>
-
-            <div>
-              <strong>Leader</strong>
-              <small>Project lead</small>
+          <div className="timeline-control" aria-label="Prediction horizon preview">
+            <div className="timeline-control-heading">
+              <span>Timeline</span>
+              <small>Preview</small>
             </div>
+
+            <div className="timeline-options">
+              {[30, 60, 90].map((days) => (
+                <button
+                  type="button"
+                  className={previewHorizon === days ? "active" : ""}
+                  key={days}
+                  onClick={() => setPreviewHorizon(days)}
+                  aria-pressed={previewHorizon === days}
+                >
+                  {days}d
+                </button>
+              ))}
+            </div>
+          </div>
+
+          <div className="account-menu-wrap">
+            <button className="user-profile account-button" type="button" onClick={() => setAccountMenuOpen((open) => !open)} aria-expanded={accountMenuOpen} aria-haspopup="menu">
+              <div className="avatar">{user.name.slice(0, 2).toUpperCase()}</div>
+
+              <div>
+                <strong>{user.name}</strong>
+                <small>{user.email}</small>
+              </div>
+            </button>
+
+            {accountMenuOpen && (
+              <div className="account-menu" role="menu">
+                <div className="account-menu-user">
+                  <strong>{user.name}</strong>
+                  <span>{user.email}</span>
+                </div>
+                <button type="button" role="menuitem" onClick={logout}>Log out</button>
+              </div>
+            )}
           </div>
         </header>
 
@@ -342,10 +420,6 @@ function App() {
               </p>
             </div>
 
-            <div className="live-status">
-              <span className="status-dot" />
-              Backend: {backendStatus}
-            </div>
           </section>
 
           <section className="summary-grid" aria-label="Network summary">
@@ -369,7 +443,10 @@ function App() {
             })}
           </section>
 
-          <section className="dashboard-grid">
+          <section
+            className="dashboard-grid control-room-grid"
+            data-preview-horizon={previewHorizon}
+          >
             <article className="panel network-panel" id="network">
               <div className="panel-heading">
                 <div>
@@ -386,7 +463,7 @@ function App() {
               <NetworkGraph
                 selectedNode={selectedNode}
                 onSelectNode={handleSelectNode}
-                networkNodes={networkNodes}
+                networkNodes={overlayNetworkNodes}
                 networkEdges={networkEdges}
               />
 
@@ -402,13 +479,22 @@ function App() {
                   </div>
 
                   {selectedNode && (
-                    <span
-                      className={`risk-badge ${selectedNode.risk || "low"
-                        }`}
-                    >
-                      {selectedNode.risk || "unknown"} risk
-                    </span>
-                  )}
+  <span
+    className={`risk-badge ${
+      selectedNode.predictionRisk ||
+      selectedNode.risk ||
+      "low"
+    }`}
+  >
+    {Number.isFinite(selectedNode.predictionScore)
+      ? "ML "
+      : ""}
+    {selectedNode.predictionRisk ||
+      selectedNode.risk ||
+      "unknown"}{" "}
+    risk
+  </span>
+)}
                 </div>
 
                 {selectedNode ? (
@@ -438,20 +524,27 @@ function App() {
                     </div>
 
                     <div className="detail-item">
-                      <span>Risk Score</span>
-                      <strong>
-                        {selectedNode.properties?.risk_score ?? "N/A"}
-                      </strong>
-                    </div>
+  <span>Risk Score</span>
+  <strong>
+    {selectedNode.properties?.risk_score ?? "N/A"}
+  </strong>
+</div>
 
-                    <div className="detail-item">
-                      <span>Capacity</span>
-                      <strong>
-                        {formatCapacity(
-                          selectedNode.properties?.capacity
-                        )}
-                      </strong>
-                    </div>
+{Number.isFinite(selectedNode.predictionScore) && (
+  <div className="detail-item">
+    <span>ML Impact</span>
+    <strong>
+      {(selectedNode.predictionScore * 100).toFixed(2)}%
+    </strong>
+  </div>
+)}
+
+<div className="detail-item">
+  <span>Capacity</span>
+  <strong>
+    {formatCapacity(selectedNode.properties?.capacity)}
+  </strong>
+</div>
                   </div>
                 ) : (
                   <div className="empty-details">
@@ -578,7 +671,7 @@ function App() {
 
                   {!predictionLoading &&
                     !predictionError &&
-                    predictions.map((item, index) => {
+                    predictions.slice(0, 6).map((item, index) => {
                       const percentage = Math.min(
                         100,
                         Math.max(0, Number(item.prediction) * 100)
