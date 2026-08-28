@@ -1175,6 +1175,7 @@ body {
   width: 100%;
   height: 100%;
   cursor: grab;
+  -webkit-user-select: none;
   user-select: none;
 }
 
@@ -1204,6 +1205,7 @@ body {
   background: rgba(11, 27, 50, 0.94);
   box-shadow: 0 8px 22px rgba(0, 0, 0, 0.28);
 
+  -webkit-backdrop-filter: blur(8px);
   backdrop-filter: blur(8px);
 }
 
@@ -1637,8 +1639,6 @@ body {
   max-height: 365px;
   overflow-y: auto;
   padding: 4px 16px 12px;
-  scrollbar-width: thin;
-  scrollbar-color: #304766 transparent;
 }
 
 .prediction-list::-webkit-scrollbar {
@@ -1909,10 +1909,9 @@ body {
 }
 
 .supplier-details-panel .panel-heading {
-  min-height: auto;
+  min-height: 0;
   margin: 0 0 16px;
   padding: 2px 2px 15px;
-  border-bottom: 1px solid rgba(131, 166, 206, 0.18);
 }
 
 .supplier-details-panel .panel-heading h2 {
@@ -2026,6 +2025,7 @@ body {
 .network-legend {
   border-color: rgba(131, 166, 206, 0.18);
   background: rgba(8, 20, 37, 0.92);
+  -webkit-backdrop-filter: blur(8px);
   backdrop-filter: blur(8px);
 }
 
@@ -2069,11 +2069,6 @@ body {
 
 .panel-heading {
   background: rgba(13, 30, 76, 0.18);
-}
-
-* {
-  scrollbar-width: thin;
-  scrollbar-color: #304766 transparent;
 }
 
 *::-webkit-scrollbar {
@@ -2125,5 +2120,190 @@ body {
 
   .detail-item {
     min-height: 62px;
+  }
+}
+/* =========================================================
+   Week 4 operational control-room layout
+   ========================================================= */
+
+@media (min-width: 1200px) {
+  .app-shell {
+    grid-template-columns: 190px minmax(0, 1fr);
+  }
+
+  .sidebar {
+    padding-inline: 14px;
+  }
+
+  .content-wrapper {
+    max-width: none;
+    padding: 18px;
+  }
+
+  .dashboard-heading {
+    margin-bottom: 14px;
+  }
+
+  .summary-grid {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 10px;
+    margin-bottom: 14px;
+  }
+
+  .summary-card {
+    min-height: 102px;
+    padding: 14px;
+  }
+
+  .dashboard-grid {
+    display: grid;
+    grid-template-columns:
+      minmax(220px, 0.72fr)
+      minmax(520px, 1.9fr)
+      minmax(280px, 0.9fr);
+    grid-template-areas:
+      "disruptions network prediction"
+      "exposure network prediction";
+    align-items: start;
+    gap: 12px;
+  }
+
+  /*
+   * Allow the three panels inside side-panels to participate
+   * directly in the parent dashboard grid.
+   */
+  .side-panels {
+    display: contents;
+  }
+
+  .network-panel {
+    grid-area: network;
+    min-width: 0;
+  }
+
+  .disruptions-panel {
+    grid-area: disruptions;
+    min-width: 0;
+    max-height: 360px;
+  }
+
+  .prediction-panel {
+    grid-area: prediction;
+    min-width: 0;
+  }
+
+  .exposure-panel {
+    grid-area: exposure;
+    min-width: 0;
+  }
+
+  .disruption-list {
+    max-height: 286px;
+    overflow-y: auto;
+  }
+
+  .prediction-list {
+    max-height: 500px;
+    overflow-y: auto;
+  }
+
+  .network-canvas {
+    height: clamp(520px, 62vh, 680px);
+  }
+
+  .supplier-details-panel {
+    border-top: 1px solid var(--border);
+  }
+
+  .details-grid {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+
+  .panel-heading {
+    min-height: 58px;
+    padding: 14px 16px;
+  }
+
+  .disruption-item {
+    padding: 13px 14px;
+  }
+}
+
+@media (min-width: 761px) and (max-width: 1199px) {
+  .dashboard-grid {
+    grid-template-columns: minmax(0, 1.5fr) minmax(280px, 0.75fr);
+  }
+
+  .network-canvas {
+    height: 520px;
+  }
+
+  .side-panels {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* Compact scrollbars for operational panels */
+
+.disruption-list::-webkit-scrollbar,
+.prediction-list::-webkit-scrollbar {
+  width: 6px;
+}
+
+.disruption-list::-webkit-scrollbar-track,
+.prediction-list::-webkit-scrollbar-track {
+  background: var(--panel-dark);
+}
+
+.disruption-list::-webkit-scrollbar-thumb,
+.prediction-list::-webkit-scrollbar-thumb {
+  border-radius: 999px;
+  background: var(--blue);
+}
+
+/* Week 4 control-room rail alignment correction */
+
+@media (min-width: 1200px) {
+  .dashboard-grid {
+    grid-template-areas: none;
+    grid-template-rows: auto;
+  }
+
+  .network-panel {
+    grid-column: 2;
+    grid-row: 1;
+  }
+
+  .side-panels {
+    grid-column: 1 / -1;
+    grid-row: 1;
+    align-self: start;
+    display: grid;
+    grid-template-columns:
+      minmax(220px, 0.72fr)
+      minmax(520px, 1.9fr)
+      minmax(280px, 0.9fr);
+    grid-template-areas:
+      "disruptions empty prediction"
+      "exposure empty prediction";
+    gap: 12px;
+    pointer-events: none;
+  }
+
+  .side-panels > .panel {
+    pointer-events: auto;
+  }
+
+  .disruptions-panel {
+    grid-area: disruptions;
+    max-height: 360px;
+  }
+
+  .exposure-panel {
+    grid-area: exposure;
+  }
+
+  .prediction-panel {
+    grid-area: prediction;
   }
 }

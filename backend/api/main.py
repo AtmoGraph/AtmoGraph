@@ -1,4 +1,5 @@
-from fastapi import FastAPI
+from fastapi import FastAPI, HTTPException, Request
+from fastapi.responses import JSONResponse
 from fastapi.middleware.cors import CORSMiddleware
 
 from backend.python.db import Neo4jConnection
@@ -9,14 +10,33 @@ from backend.python.graph_loader import (
     create_graph_edges,
 )
 
-from backend.api.nlp_routes import router as nlp_router
+try:
+    from backend.api.nlp_routes import router as nlp_router
+except (ImportError, OSError) as exc:
+    nlp_router = None
+    print(f"NLP routes disabled: {exc}")
+
+from backend.api.auth import router as auth_router, user_from_request
 
 app = FastAPI(
     title="AtmoGraph Backend API",
     version="0.1.0",
 )
 
-app.include_router(nlp_router)
+if nlp_router is not None:
+    app.include_router(nlp_router)
+app.include_router(auth_router)
+
+@app.middleware("http")
+async def protect_api(request: Request, call_next):
+    path = request.url.path
+    public = path == "/api/health" or path.startswith("/api/auth/") or request.method == "OPTIONS"
+    if path.startswith("/api/") and not public:
+        try:
+            user_from_request(request)
+        except HTTPException as exc:
+            return JSONResponse(status_code=exc.status_code, content={"detail": exc.detail})
+    return await call_next(request)
 
 # React frontend
 app.add_middleware(

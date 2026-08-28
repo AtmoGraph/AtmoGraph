@@ -18,7 +18,9 @@ import {
 } from "lucide-react";
 
 import NetworkGraph from "./components/NetworkGraph";
+import { apiFetch, useAuth } from "./auth";
 import "./App.css";
+import "./ControlRoom.css";
 
 const exposureData = [
   { label: "Ports", count: 8, percentage: 86 },
@@ -68,10 +70,11 @@ function formatDisruptionTime(disruption) {
 }
 
 function App() {
+  const { user, logout } = useAuth();
+  const [accountMenuOpen, setAccountMenuOpen] = useState(false);
   const [networkNodes, setNetworkNodes] = useState([]);
   const [networkEdges, setNetworkEdges] = useState([]);
   const [selectedNode, setSelectedNode] = useState(null);
-  const [backendStatus, setBackendStatus] = useState("Checking...");
   const [searchTerm, setSearchTerm] = useState("");
   const [disruptions, setDisruptions] = useState([]);
   const [disruptionsLoading, setDisruptionsLoading] = useState(true);
@@ -79,6 +82,7 @@ function App() {
   const [predictions, setPredictions] = useState([]);
   const [predictionLoading, setPredictionLoading] = useState(true);
   const [predictionError, setPredictionError] = useState("");
+  const [previewHorizon, setPreviewHorizon] = useState(30);
 
   const predictionByNodeId = useMemo(
   () =>
@@ -167,20 +171,13 @@ const overlayNetworkNodes = useMemo(
   useEffect(() => {
     const loadBackendData = async () => {
       try {
-        const healthResponse = await fetch(
-          "http://localhost:8001/api/health"
-        );
+        const healthResponse = await apiFetch("/api/health");
 
         if (!healthResponse.ok) {
           throw new Error("Backend health check failed");
         }
 
-        const healthData = await healthResponse.json();
-        setBackendStatus(healthData.status);
-
-        const graphResponse = await fetch(
-          "http://localhost:8001/api/graph"
-        );
+        const graphResponse = await apiFetch("/api/graph");
 
         if (!graphResponse.ok) {
           throw new Error("Graph API request failed");
@@ -200,7 +197,6 @@ const overlayNetworkNodes = useMemo(
         );
       } catch (error) {
         console.error("Backend connection error:", error);
-        setBackendStatus("offline");
       }
     };
 
@@ -213,9 +209,7 @@ const overlayNetworkNodes = useMemo(
         setDisruptionsLoading(true);
         setDisruptionsError("");
 
-        const response = await fetch(
-          "http://localhost:8001/api/disruptions"
-        );
+        const response = await apiFetch("/api/disruptions");
 
         if (!response.ok) {
           throw new Error("Disruptions API request failed");
@@ -242,8 +236,8 @@ const overlayNetworkNodes = useMemo(
         setPredictionLoading(true);
         setPredictionError("");
 
-        const response = await fetch(
-          "http://localhost:8001/api/predictions",
+        const response = await apiFetch(
+          "/api/predictions",
           {
             method: "POST",
             headers: {
@@ -347,6 +341,13 @@ const overlayNetworkNodes = useMemo(
 
       <main className="main-content">
         <header className="topbar">
+          <div className="control-room-title">
+            <span className="status-dot" />
+            <div>
+              <strong>Operational control room</strong>
+            </div>
+          </div>
+
           <label className="search-box">
             <Search size={17} />
 
@@ -364,13 +365,46 @@ const overlayNetworkNodes = useMemo(
             <span />
           </button>
 
-          <div className="user-profile">
-            <div className="avatar">AS</div>
-
-            <div>
-              <strong>Leader</strong>
-              <small>Project lead</small>
+          <div className="timeline-control" aria-label="Prediction horizon preview">
+            <div className="timeline-control-heading">
+              <span>Timeline</span>
+              <small>Preview</small>
             </div>
+
+            <div className="timeline-options">
+              {[30, 60, 90].map((days) => (
+                <button
+                  type="button"
+                  className={previewHorizon === days ? "active" : ""}
+                  key={days}
+                  onClick={() => setPreviewHorizon(days)}
+                  aria-pressed={previewHorizon === days}
+                >
+                  {days}d
+                </button>
+              ))}
+            </div>
+          </div>
+
+          <div className="account-menu-wrap">
+            <button className="user-profile account-button" type="button" onClick={() => setAccountMenuOpen((open) => !open)} aria-expanded={accountMenuOpen} aria-haspopup="menu">
+              <div className="avatar">{user.name.slice(0, 2).toUpperCase()}</div>
+
+              <div>
+                <strong>{user.name}</strong>
+                <small>{user.email}</small>
+              </div>
+            </button>
+
+            {accountMenuOpen && (
+              <div className="account-menu" role="menu">
+                <div className="account-menu-user">
+                  <strong>{user.name}</strong>
+                  <span>{user.email}</span>
+                </div>
+                <button type="button" role="menuitem" onClick={logout}>Log out</button>
+              </div>
+            )}
           </div>
         </header>
 
@@ -386,10 +420,6 @@ const overlayNetworkNodes = useMemo(
               </p>
             </div>
 
-            <div className="live-status">
-              <span className="status-dot" />
-              Backend: {backendStatus}
-            </div>
           </section>
 
           <section className="summary-grid" aria-label="Network summary">
@@ -413,7 +443,10 @@ const overlayNetworkNodes = useMemo(
             })}
           </section>
 
-          <section className="dashboard-grid">
+          <section
+            className="dashboard-grid control-room-grid"
+            data-preview-horizon={previewHorizon}
+          >
             <article className="panel network-panel" id="network">
               <div className="panel-heading">
                 <div>
