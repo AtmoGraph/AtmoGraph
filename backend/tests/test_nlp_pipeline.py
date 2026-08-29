@@ -6,7 +6,7 @@ from backend.nlp.disruption_classifier import classify_disruption
 from backend.nlp.entity_extractor import extract_entities
 from backend.nlp.pipeline import analyze_news, create_disruption_id
 from backend.nlp.feed_ingestor import parse_feed_content
-
+from backend.api import auth as auth_api
 
 SAMPLE_NEWS = (
     "A port strike at the Port of Rotterdam is delaying shipments "
@@ -56,11 +56,37 @@ def test_pipeline_rejects_empty_text():
         analyze_news("   ")
 
 
-def test_analyze_endpoint():
+def test_analyze_endpoint(tmp_path, monkeypatch):
+    monkeypatch.setattr(
+        auth_api,
+        "database_path",
+        tmp_path / "auth.db",
+    )
+    monkeypatch.setenv(
+        "ATMOGRAPH_JWT_SECRET",
+        "test-secret-key-for-atmograph-authentication-1234567890",
+    )
+
     client = TestClient(app)
+
+    registration = client.post(
+        "/api/auth/register",
+        json={
+            "name": "NLP Test User",
+            "email": "nlp-test@example.com",
+            "password": "TestPassword123",
+        },
+    )
+
+    assert registration.status_code == 201
+
+    token = registration.json()["access_token"]
 
     response = client.post(
         "/api/nlp/analyze",
+        headers={
+            "Authorization": f"Bearer {token}",
+        },
         json={
             "text": SAMPLE_NEWS,
             "title": "Rotterdam strike disrupts shipments",

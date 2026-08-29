@@ -155,7 +155,17 @@ def main():
             scenarios = get_scenarios(
                 rows
             )
+            missing_scenarios = sorted(
+                set(scenarios) - set(targets)
+            )
 
+        if missing_scenarios:
+            raise RuntimeError(
+                "Evaluation data is incompatible with the Neo4j graph. "
+                f"No mapped targets for {len(missing_scenarios)} "
+                f"of {len(scenarios)} scenarios. "
+                f"Examples: {missing_scenarios[:5]}"
+            )
             # -----------------------------
             # Load trained model
             # -----------------------------

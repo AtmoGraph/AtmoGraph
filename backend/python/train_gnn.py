@@ -182,6 +182,17 @@ def train():
                 rows
             )
 
+        missing_scenarios = sorted(
+            set(scenarios) - set(targets)
+        )
+
+        if missing_scenarios:
+            raise RuntimeError(
+                "Training data is incompatible with the Neo4j graph. "
+                f"No mapped targets for {len(missing_scenarios)} "
+                f"of {len(scenarios)} scenarios. "
+                f"Examples: {missing_scenarios[:5]}"
+            )
             print(
                 "\n========== TRAINING =========="
             )
