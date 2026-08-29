@@ -1,11 +1,7 @@
 import torch
 from pydantic import BaseModel
 
-from backend.python.db import Neo4jConnection
-from backend.python.graph_loader import (
-    load_nodes,
-    load_relationships,
-)
+from backend.python.canonical_gnn_graph import load_canonical_gnn_graph
 from backend.python.scenario_graph import (
     build_scenario_graph,
 )
@@ -39,78 +35,63 @@ def generate_predictions(
     disruption_type,
     severity,
 ):
-    db = Neo4jConnection()
+    aliases = {
+        "port-rotterdam": "PORT003",
+    }
+    disrupted_port_id = aliases.get(disrupted_port_id, disrupted_port_id)
+    nodes, relationships = load_canonical_gnn_graph()
+    valid_port_ids = {
+        node["properties"]["id"]
+        for node in nodes
+        if "Port" in node["labels"]
+    }
+    if disrupted_port_id not in valid_port_ids:
+        raise ValueError(
+            f"Unknown canonical port ID: {disrupted_port_id}. "
+            f"Valid IDs: {sorted(valid_port_ids)}"
+        )
 
-    try:
-        with db.driver.session() as session:
+    x, edge_index, edge_type = build_scenario_graph(
+        nodes=nodes,
+        relationships=relationships,
+        disrupted_port_id=disrupted_port_id,
+        disruption_type=disruption_type,
+        severity=severity,
+    )
 
-            nodes = load_nodes(session)
+    model = load_gnn_model()
 
-            relationships = load_relationships(
-                session
-            )
+    with torch.no_grad():
+        predictions = model(x, edge_index)
 
-            x, edge_index, edge_type = (
-                build_scenario_graph(
-                    nodes=nodes,
-                    relationships=relationships,
-                    disrupted_port_id=disrupted_port_id,
-                    disruption_type=disruption_type,
-                    severity=severity,
-                )
-            )
+    results = []
+    predicted_node_types = {"Manufacturer", "Product", "Warehouse", "Market"}
 
-            model = load_gnn_model()
+    for index, node in enumerate(nodes):
 
-            with torch.no_grad():
-                predictions = model(
-                    x,
-                    edge_index,
-                )
+        node_id = node["properties"].get("id")
 
-            results = []
+        node_name = node["properties"].get("name")
 
-            for index, node in enumerate(nodes):
+        node_type = node["labels"][0] if node.get("labels") else "Unknown"
 
-                node_id = node["properties"].get(
-                    "id"
-                )
+        if node_type not in predicted_node_types:
+            continue
 
-                node_name = node["properties"].get(
-                    "name"
-                )
+        prediction = float(predictions[index].item())
 
-                node_type = (
-                    node["labels"][0]
-                    if node.get("labels")
-                    else "Unknown"
-                )
+        results.append(
+            {
+                "node_id": node_id,
+                "node_name": node_name,
+                "node_type": node_type,
+                "prediction": round(prediction, 4),
+            }
+        )
 
-                prediction = float(
-                    predictions[index].item()
-                )
+    results.sort(key=lambda item: item["prediction"], reverse=True)
 
-                results.append(
-                    {
-                        "node_id": node_id,
-                        "node_name": node_name,
-                        "node_type": node_type,
-                        "prediction": round(
-                            prediction,
-                            4,
-                        ),
-                    }
-                )
-
-            results.sort(
-                key=lambda item: item["prediction"],
-                reverse=True,
-            )
-
-            return results
-
-    finally:
-        db.close()
+    return results
 
 
 def predict_scenario(
