@@ -1,0 +1,9 @@
+{
+  "test_scenarios": 15,
+  "test_predictions": 160,
+  "mae": 0.009256,
+  "rmse": 0.011282,
+  "model": "ripple_gnn.pt",
+  "graph_nodes": 25,
+  "graph_relationships": 25
+}

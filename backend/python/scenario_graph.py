@@ -53,20 +53,15 @@ def create_scenario_features(
             else 0.0
         )
 
-        node_severity = (
-            severity
-            if is_disrupted
-            else 0.0
-        )
+        # Severity and disruption type describe the whole scenario and are
+        # therefore available to every node at inference time.  Only
+        # ``is_disrupted`` identifies the source port.
+        node_severity = severity
 
         disruption_type_features = [
             (
                 1.0
-                if (
-                    is_disrupted
-                    and disruption_type
-                    == current_type
-                )
+                if disruption_type == current_type
                 else 0.0
             )
             for current_type in DISRUPTION_TYPES
@@ -170,19 +165,20 @@ def build_scenario_graph(
         node_mapping,
     )
 
+    sources = [edge["source"] for edge in edges]
+    targets = [edge["target"] for edge in edges]
+
+    # Ripple effects can travel both downstream and upstream through a route.
+    # Explicit reverse edges make that message passing deterministic instead
+    # of depending on how Neo4j happened to orient each relationship.
     edge_index = torch.tensor(
-        [
-            [edge["source"] for edge in edges],
-            [edge["target"] for edge in edges],
-        ],
+        [sources + targets, targets + sources],
         dtype=torch.long,
     )
 
+    relationship_types = [edge["type"] for edge in edges]
     edge_type = torch.tensor(
-        [
-            edge["type"]
-            for edge in edges
-        ],
+        relationship_types + relationship_types,
         dtype=torch.long,
     )
 

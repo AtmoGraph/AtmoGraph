@@ -55,4 +55,5 @@ class RippleGCN(nn.Module):
         # Node-level prediction
         x = self.output_layer(x)
 
-        return x.squeeze(-1)
+        # Synthetic impact labels are probabilities in the [0, 1] range.
+        return torch.sigmoid(x).squeeze(-1)
