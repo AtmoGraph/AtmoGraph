@@ -17,6 +17,7 @@ except (ImportError, OSError) as exc:
     print(f"NLP routes disabled: {exc}")
 
 from backend.api.auth import router as auth_router, user_from_request
+from backend.api.realtime import router as realtime_router
 
 app = FastAPI(
     title="AtmoGraph Backend API",
@@ -26,6 +27,7 @@ app = FastAPI(
 if nlp_router is not None:
     app.include_router(nlp_router)
 app.include_router(auth_router)
+app.include_router(realtime_router)
 
 @app.middleware("http")
 async def protect_api(request: Request, call_next):
@@ -179,8 +181,8 @@ def get_disruptions():
                 d.id AS id,
                 d.name AS name,
                 d.type AS type,
-                d.severity AS severity,
-                d.expected_delay_days AS expected_delay_days,
+                coalesce(d.risk_score, d.severity) AS severity,
+                properties(d)["expected_delay_days"] AS expected_delay_days,
                 d.status AS status,
                 p.id AS port_id,
                 p.name AS port_name

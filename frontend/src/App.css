@@ -2307,3 +2307,66 @@ body {
     grid-area: prediction;
   }
 }
+
+.prediction-live-actions {
+  display: flex;
+  flex: 0 0 auto;
+  align-items: center;
+  gap: 7px;
+}
+
+.stream-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 5px 7px;
+  border: 1px solid rgba(131, 166, 206, 0.25);
+  border-radius: 999px;
+  color: var(--muted);
+  background: rgba(8, 25, 43, 0.8);
+  font-size: 0.58rem;
+  font-weight: 800;
+  text-transform: uppercase;
+}
+
+.stream-badge > span {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: currentColor;
+}
+
+.stream-badge.live {
+  color: #43d7a0;
+  border-color: rgba(67, 215, 160, 0.35);
+}
+
+.stream-badge.reconnecting {
+  color: #ffad4d;
+}
+
+.prediction-panel .live-action {
+  width: auto;
+  min-width: 88px;
+  min-height: 28px;
+  padding: 5px 9px;
+  border: 1px solid rgba(121, 201, 255, 0.42);
+  border-radius: 7px;
+  color: #ccecff;
+  background: rgba(28, 84, 119, 0.72);
+  cursor: pointer;
+  font: inherit;
+  font-size: 0.62rem;
+  font-weight: 800;
+  line-height: 1;
+}
+
+.prediction-panel .live-action:hover:not(:disabled) {
+  border-color: #79c9ff;
+  background: rgba(34, 106, 148, 0.9);
+}
+
+.prediction-panel .live-action:disabled {
+  cursor: not-allowed;
+  opacity: 0.55;
+}

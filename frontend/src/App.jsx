@@ -2,6 +2,7 @@ import {
   useCallback,
   useEffect,
   useMemo,
+  useRef,
   useState,
 } from "react";
 import {
@@ -83,6 +84,11 @@ function App() {
   const [predictionLoading, setPredictionLoading] = useState(true);
   const [predictionError, setPredictionError] = useState("");
   const [previewHorizon, setPreviewHorizon] = useState(30);
+  const [realtimeStatus, setRealtimeStatus] = useState("connecting");
+  const [lastRealtimeEvent, setLastRealtimeEvent] = useState(null);
+  const [predictionScenario, setPredictionScenario] = useState(null);
+  const [livePublishing, setLivePublishing] = useState(false);
+  const latestEventId = useRef(0);
 
   const predictionByNodeId = useMemo(
   () =>
@@ -168,8 +174,7 @@ const overlayNetworkNodes = useMemo(
     },
   ];
 
-  useEffect(() => {
-    const loadBackendData = async () => {
+  const loadBackendData = useCallback(async () => {
       try {
         const healthResponse = await apiFetch("/api/health");
 
@@ -198,13 +203,9 @@ const overlayNetworkNodes = useMemo(
       } catch (error) {
         console.error("Backend connection error:", error);
       }
-    };
-
-    loadBackendData();
   }, []);
 
-  useEffect(() => {
-    const loadDisruptions = async () => {
+  const loadDisruptions = useCallback(async () => {
       try {
         setDisruptionsLoading(true);
         setDisruptionsError("");
@@ -225,13 +226,25 @@ const overlayNetworkNodes = useMemo(
       } finally {
         setDisruptionsLoading(false);
       }
-    };
-
-    loadDisruptions();
   }, []);
 
-  useEffect(() => {
-    const loadPredictions = async () => {
+  const applyPredictionData = useCallback((data) => {
+    setPredictions(
+      (data.top_impacted_nodes || []).filter(
+        (item) => item.node_type !== "Disruption"
+      )
+    );
+    setPredictionScenario(data.scenario || null);
+  }, []);
+
+  const loadPredictions = useCallback(async (
+    horizonDays,
+    scenario = {
+      disrupted_port_id: "PORT003",
+      disruption_type: "PORT_CLOSURE",
+      severity: 0.95,
+    }
+  ) => {
       try {
         setPredictionLoading(true);
         setPredictionError("");
@@ -244,9 +257,10 @@ const overlayNetworkNodes = useMemo(
               "Content-Type": "application/json",
             },
             body: JSON.stringify({
-              disrupted_port_id: "PORT003",
-              disruption_type: "PORT_CLOSURE",
-              severity: 0.95,
+              disrupted_port_id: scenario.disrupted_port_id,
+              disruption_type: scenario.disruption_type,
+              severity: scenario.severity,
+              horizon_days: horizonDays,
             }),
           }
         );
@@ -257,11 +271,7 @@ const overlayNetworkNodes = useMemo(
 
         const data = await response.json();
 
-        setPredictions(
-  (data.top_impacted_nodes || []).filter(
-    (item) => item.node_type !== "Disruption"
-  )
-);
+        applyPredictionData(data);
       } catch (error) {
         console.error("Prediction API error:", error);
         setPredictionError("Unable to load AI predictions");
@@ -269,10 +279,130 @@ const overlayNetworkNodes = useMemo(
       } finally {
         setPredictionLoading(false);
       }
+  }, [applyPredictionData]);
+
+  useEffect(() => {
+    loadBackendData();
+    loadDisruptions();
+  }, [loadBackendData, loadDisruptions]);
+
+  useEffect(() => {
+    loadPredictions(previewHorizon);
+  }, [loadPredictions, previewHorizon]);
+
+  useEffect(() => {
+    const controller = new AbortController();
+    let reconnectTimer;
+
+    const connect = async () => {
+      try {
+        setRealtimeStatus("connecting");
+        const response = await apiFetch("/api/realtime/events", {
+          headers: {
+            Accept: "text/event-stream",
+            ...(latestEventId.current
+              ? { "Last-Event-ID": String(latestEventId.current) }
+              : {}),
+          },
+          signal: controller.signal,
+        });
+
+        if (!response.ok || !response.body) {
+          throw new Error("Real-time stream unavailable");
+        }
+
+        setRealtimeStatus("live");
+        const reader = response.body.getReader();
+        const decoder = new TextDecoder();
+        let buffer = "";
+
+        while (!controller.signal.aborted) {
+          const { value, done } = await reader.read();
+          if (done) break;
+          buffer += decoder.decode(value, { stream: true });
+
+          let boundary = buffer.indexOf("\n\n");
+          while (boundary !== -1) {
+            const block = buffer.slice(0, boundary);
+            buffer = buffer.slice(boundary + 2);
+            boundary = buffer.indexOf("\n\n");
+
+            const dataLine = block
+              .split("\n")
+              .find((line) => line.startsWith("data: "));
+            if (!dataLine) continue;
+
+            const event = JSON.parse(dataLine.slice(6));
+            latestEventId.current = event.id;
+            setLastRealtimeEvent(event.created_at);
+
+            if (event.type === "prediction.updated") {
+              const data = event.payload?.prediction;
+              if (data?.scenario?.horizon_days === previewHorizon) {
+                applyPredictionData(data);
+              }
+            }
+
+            if (event.type === "disruption.ingested") {
+              await Promise.all([
+                loadBackendData(),
+                loadDisruptions(),
+              ]);
+              const liveScenario = event.payload?.prediction?.scenario;
+              if (liveScenario) {
+                await loadPredictions(previewHorizon, liveScenario);
+              }
+            }
+          }
+        }
+
+        if (!controller.signal.aborted) {
+          throw new Error("Real-time stream ended");
+        }
+      } catch (error) {
+        if (controller.signal.aborted) return;
+        console.error("Real-time stream error:", error);
+        setRealtimeStatus("reconnecting");
+        reconnectTimer = window.setTimeout(connect, 3000);
+      }
     };
 
-    loadPredictions();
-  }, []);
+    connect();
+    return () => {
+      controller.abort();
+      window.clearTimeout(reconnectTimer);
+    };
+  }, [
+    applyPredictionData,
+    loadBackendData,
+    loadDisruptions,
+    loadPredictions,
+    previewHorizon,
+  ]);
+
+  const publishLiveScenario = async () => {
+    try {
+      setLivePublishing(true);
+      setPredictionError("");
+      const response = await apiFetch("/api/realtime/scenarios", {
+        method: "POST",
+        body: JSON.stringify({
+          disrupted_port_id: "PORT003",
+          disruption_type: "PORT_CLOSURE",
+          severity: 0.95,
+          horizon_days: previewHorizon,
+        }),
+      });
+      if (!response.ok) {
+        throw new Error("Could not publish live scenario");
+      }
+    } catch (error) {
+      console.error("Live scenario error:", error);
+      setPredictionError("Unable to publish live scenario");
+    } finally {
+      setLivePublishing(false);
+    }
+  };
 
   const handleSelectNode = useCallback((node) => {
     setSelectedNode(node);
@@ -334,7 +464,12 @@ const overlayNetworkNodes = useMemo(
             Systems operational
           </p>
 
-          <small>Backend connected</small>
+          <small>Real-time: {realtimeStatus}</small>
+          <small>
+            {lastRealtimeEvent
+              ? `Last event ${new Date(lastRealtimeEvent).toLocaleTimeString()}`
+              : "Waiting for live events"}
+          </small>
           <small>AtmoGraph  v0.1.0</small>
         </div>
       </aside>
@@ -368,7 +503,7 @@ const overlayNetworkNodes = useMemo(
           <div className="timeline-control" aria-label="Prediction horizon preview">
             <div className="timeline-control-heading">
               <span>Timeline</span>
-              <small>Preview</small>
+              <small>Projection</small>
             </div>
 
             <div className="timeline-options">
@@ -639,21 +774,41 @@ const overlayNetworkNodes = useMemo(
                 <div className="panel-heading">
                   <div>
                     <h2>AI impact prediction</h2>
-                    <p>GNN prediction for Rotterdam Port Closure</p>
+                    <p>
+                      GNN projection · {previewHorizon}-day horizon
+                    </p>
                   </div>
 
-                  <span className="demo-badge">GNN live</span>
+                  <div className="prediction-live-actions">
+                    <span className={`stream-badge ${realtimeStatus}`}>
+                      <span />
+                      {realtimeStatus}
+                    </span>
+                    <button
+                      className="live-action"
+                      type="button"
+                      onClick={publishLiveScenario}
+                      disabled={livePublishing || realtimeStatus !== "live"}
+                    >
+                      {livePublishing ? "Publishing…" : "Simulate live"}
+                    </button>
+                  </div>
                 </div>
 
                 <div className="prediction-scenario">
                   <div className="prediction-scenario-main">
                     <span className="prediction-eyebrow">Scenario</span>
-                    <strong>PORT003 · Rotterdam Port</strong>
+                    <strong>
+                      {predictionScenario?.disrupted_port_id || "PORT003"}
+                      {" · Rotterdam Port"}
+                    </strong>
                   </div>
 
                   <span className="prediction-severity">
                     <span>Severity</span>
-                    95%
+                    {Math.round(
+                      Number(predictionScenario?.severity ?? 0.95) * 100
+                    )}%
                   </span>
                 </div>
 

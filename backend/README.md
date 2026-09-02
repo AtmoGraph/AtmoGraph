@@ -8,6 +8,8 @@ The AtmoGraph backend provides:
 - Rule-based disruption classification
 - RSS news-feed ingestion
 - Neo4j risk-state updates
+- Authenticated server-sent real-time events
+- GNN baseline projections for 30/60/90-day operational views
 
 ## Requirements
 
@@ -74,6 +76,13 @@ http://127.0.0.1:8001/docs
 | POST | `/api/nlp/ingest` | Analyze news and update affected Neo4j nodes |
 | GET | `/api/nlp/feeds` | List allowlisted RSS feeds |
 | POST | `/api/nlp/feeds/{feed_key}/analyze` | Retrieve and analyze current RSS articles |
+| GET | `/api/realtime/events` | Stream authenticated prediction and ingestion events |
+| POST | `/api/realtime/scenarios` | Publish a controlled GNN scenario to connected dashboards |
+
+The committed GNN was trained to predict node impact, not independent time
+horizons. The 30-day value is the validated GNN baseline. The 60/90-day views
+apply a documented recovery curve and are labelled as projections in the UI;
+they must not be presented as separately trained forecasts.
 
 Example request:
 
