@@ -110,11 +110,14 @@ def get_graph():
                         "name",
                         "Unknown",
                     ),
-                    "type": (
-                        node["labels"][0]
-                        if node["labels"]
-                        else "Unknown"
-                    ),
+                   "type": next(
+    (
+        label
+        for label in node["labels"]
+        if label != "SupplyChainNode"
+    ),
+    "SupplyChainNode",
+),
                     "properties": properties,
                 })
 

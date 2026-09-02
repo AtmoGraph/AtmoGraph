@@ -482,6 +482,7 @@ const overlayNetworkNodes = useMemo(
   <span
     className={`risk-badge ${
       selectedNode.predictionRisk ||
+      selectedNode.properties?.risk ||
       selectedNode.risk ||
       "low"
     }`}
@@ -490,6 +491,7 @@ const overlayNetworkNodes = useMemo(
       ? "ML "
       : ""}
     {selectedNode.predictionRisk ||
+      selectedNode.properties?.risk ||
       selectedNode.risk ||
       "unknown"}{" "}
     risk
