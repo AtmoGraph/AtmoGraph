@@ -23,13 +23,6 @@ import { apiFetch, useAuth } from "./auth";
 import "./App.css";
 import "./ControlRoom.css";
 
-const exposureData = [
-  { label: "Ports", count: 8, percentage: 86 },
-  { label: "Suppliers", count: 5, percentage: 58 },
-  { label: "Factories", count: 3, percentage: 35 },
-  { label: "Markets", count: 2, percentage: 23 },
-];
-
 function formatCapacity(value) {
   if (value === undefined || value === null) {
     return "N/A";
@@ -75,6 +68,7 @@ function App() {
   const [accountMenuOpen, setAccountMenuOpen] = useState(false);
   const [networkNodes, setNetworkNodes] = useState([]);
   const [networkEdges, setNetworkEdges] = useState([]);
+  const [graphSummary, setGraphSummary] = useState(null);
   const [selectedNode, setSelectedNode] = useState(null);
   const [searchTerm, setSearchTerm] = useState("");
   const [disruptions, setDisruptions] = useState([]);
@@ -129,16 +123,37 @@ const overlayNetworkNodes = useMemo(
   [networkNodes, predictionByNodeId]
 );
 
-  const activeNodes = networkNodes.length;
+  const activeNodes =
+    graphSummary?.supply_chain_nodes ??
+    networkNodes.filter((node) => node.type !== "Disruption").length;
 
-  const atRiskNodes = networkNodes.filter((node) => {
-    const riskScore = Number(node.properties?.risk_score ?? 0);
-    return riskScore >= 0.2;
-  }).length;
+  const atRiskNodes = graphSummary?.at_risk_nodes ?? 0;
 
-  const activeRoutes = networkNodes.filter(
-    (node) => node.type === "ShippingRoute"
-  ).length;
+  const activeRoutes = graphSummary?.operational_relationships ?? 0;
+
+  const exposureData = useMemo(() => {
+    const labels = {
+      Port: "Ports",
+      Supplier: "Suppliers",
+      Factory: "Factories",
+      DistributionCentre: "Distribution centres",
+      Market: "Markets",
+    };
+    const entries = Object.entries(graphSummary?.node_types || {})
+      .filter(([type]) => labels[type])
+      .map(([type, count]) => ({
+        label: labels[type],
+        count,
+      }));
+    const maximum = Math.max(
+      1,
+      ...entries.map((item) => item.count)
+    );
+    return entries.map((item) => ({
+      ...item,
+      percentage: (item.count / maximum) * 100,
+    }));
+  }, [graphSummary]);
 
   const networkHealth =
     activeNodes > 0 ? "Operational" : "Unavailable";
@@ -154,14 +169,14 @@ const overlayNetworkNodes = useMemo(
     {
       label: "At-risk nodes",
       value: atRiskNodes,
-      note: "Risk Score ≥ 0.20",
+      note: "Medium/high risk · score ≥ 0.40",
       icon: AlertTriangle,
       tone: "red",
     },
     {
       label: "Active routes",
       value: activeRoutes,
-      note: "Shipping routes in graph",
+      note: "Operational relationships",
       icon: Route,
       tone: "purple",
     },
@@ -192,6 +207,7 @@ const overlayNetworkNodes = useMemo(
 
         setNetworkNodes(graphData.nodes || []);
         setNetworkEdges(graphData.edges || []);
+        setGraphSummary(graphData.summary || null);
 
         const defaultNode = (graphData.nodes || []).find(
           (node) => node.id === "PORT003"
@@ -656,6 +672,7 @@ const overlayNetworkNodes = useMemo(
                       <strong>
                         {selectedNode.properties?.country ||
                           selectedNode.properties?.region ||
+                          selectedNode.properties?.location ||
                           "N/A"}
                       </strong>
                     </div>
@@ -917,6 +934,7 @@ const overlayNetworkNodes = useMemo(
                     <span>
                       {node.properties?.country ||
                         node.properties?.region ||
+                        node.properties?.location ||
                         "Unknown"}
                     </span>
                   </button>

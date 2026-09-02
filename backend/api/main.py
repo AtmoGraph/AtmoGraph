@@ -9,6 +9,11 @@ from backend.python.graph_loader import (
     create_node_mapping,
     create_graph_edges,
 )
+from backend.api.graph_view import (
+    build_graph_summary,
+    deduplicate_disruptions,
+    specific_node_type,
+)
 
 try:
     from backend.api.nlp_routes import router as nlp_router
@@ -112,14 +117,9 @@ def get_graph():
                         "name",
                         "Unknown",
                     ),
-                   "type": next(
-    (
-        label
-        for label in node["labels"]
-        if label != "SupplyChainNode"
-    ),
-    "SupplyChainNode",
-),
+                    "type": specific_node_type(
+                        node["labels"]
+                    ),
                     "properties": properties,
                 })
 
@@ -163,6 +163,10 @@ def get_graph():
                 "edges": graph_edges,
                 "total_nodes": len(graph_nodes),
                 "total_edges": len(graph_edges),
+                "summary": build_graph_summary(
+                    nodes,
+                    relationships,
+                ),
             }
 
     finally:
@@ -184,25 +188,38 @@ def get_disruptions():
                 coalesce(d.risk_score, d.severity) AS severity,
                 properties(d)["expected_delay_days"] AS expected_delay_days,
                 d.status AS status,
+                d.analyzed_at AS analyzed_at,
+                d.source AS source,
                 p.id AS port_id,
                 p.name AS port_name
             """
 
             result = session.run(query)
 
-            disruptions = []
+            disruption_records = []
 
             for record in result:
-                disruptions.append({
+                analyzed_at = record["analyzed_at"]
+                disruption_records.append({
                     "id": record["id"],
                     "name": record["name"],
                     "type": record["type"],
                     "severity": record["severity"],
                     "expected_delay_days": record["expected_delay_days"],
                     "status": record["status"],
+                    "analyzed_at": (
+                        str(analyzed_at)
+                        if analyzed_at is not None
+                        else None
+                    ),
+                    "source": record["source"],
                     "port_id": record["port_id"],
                     "port_name": record["port_name"],
                 })
+
+            disruptions = deduplicate_disruptions(
+                disruption_records
+            )
 
             return {
                 "total": len(disruptions),
