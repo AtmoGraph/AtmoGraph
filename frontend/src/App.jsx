@@ -15,10 +15,12 @@ import {
   Route,
   Search,
   Ship,
+  Newspaper,
   Warehouse,
 } from "lucide-react";
 
 import NetworkGraph from "./components/NetworkGraph";
+import TopologyGraph from "./components/TopologyGraph";
 import { apiFetch, useAuth } from "./auth";
 import "./App.css";
 import "./ControlRoom.css";
@@ -82,6 +84,12 @@ function App() {
   const [lastRealtimeEvent, setLastRealtimeEvent] = useState(null);
   const [predictionScenario, setPredictionScenario] = useState(null);
   const [livePublishing, setLivePublishing] = useState(false);
+  const [networkView, setNetworkView] = useState("map");
+  const [signalTab, setSignalTab] = useState("news");
+  const [newsArticles, setNewsArticles] = useState([]);
+  const [newsLoading, setNewsLoading] = useState(false);
+  const [newsError, setNewsError] = useState("");
+  const [ingestingArticle, setIngestingArticle] = useState("");
   const latestEventId = useRef(0);
 
   const predictionByNodeId = useMemo(
@@ -244,6 +252,61 @@ const overlayNetworkNodes = useMemo(
       }
   }, []);
 
+  const loadNewsFeed = useCallback(async () => {
+    try {
+      setNewsLoading(true);
+      setNewsError("");
+      const feedsResponse = await apiFetch("/api/nlp/feeds");
+      if (!feedsResponse.ok) throw new Error("Feed catalogue unavailable");
+      const feedsData = await feedsResponse.json();
+      const feed = feedsData.feeds?.[0];
+      if (!feed) throw new Error("No RSS feed is configured");
+
+      const response = await apiFetch(
+        `/api/nlp/feeds/${encodeURIComponent(feed.key)}/analyze?limit=6`,
+        { method: "POST" }
+      );
+      if (!response.ok) {
+        const detail = await response.json().catch(() => ({}));
+        throw new Error(detail.detail || "RSS analysis failed");
+      }
+      const data = await response.json();
+      setNewsArticles(data.articles || []);
+    } catch (error) {
+      console.error("News feed error:", error);
+      setNewsError(error.message || "Unable to load the live feed");
+      setNewsArticles([]);
+    } finally {
+      setNewsLoading(false);
+    }
+  }, []);
+
+  const ingestArticle = async (article) => {
+    const analysis = article.analysis;
+    try {
+      setIngestingArticle(analysis.url || analysis.title);
+      setNewsError("");
+      const response = await apiFetch("/api/nlp/ingest", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          title: analysis.title,
+          text: analysis.text,
+          source: analysis.source,
+          url: analysis.url,
+        }),
+      });
+      if (!response.ok) throw new Error("Article ingestion failed");
+      await Promise.all([loadBackendData(), loadDisruptions()]);
+      setSignalTab("disruptions");
+    } catch (error) {
+      console.error("Article ingestion error:", error);
+      setNewsError(error.message || "Unable to ingest article");
+    } finally {
+      setIngestingArticle("");
+    }
+  };
+
   const applyPredictionData = useCallback((data) => {
     setPredictions(
       (data.top_impacted_nodes || []).filter(
@@ -300,7 +363,8 @@ const overlayNetworkNodes = useMemo(
   useEffect(() => {
     loadBackendData();
     loadDisruptions();
-  }, [loadBackendData, loadDisruptions]);
+    loadNewsFeed();
+  }, [loadBackendData, loadDisruptions, loadNewsFeed]);
 
   useEffect(() => {
     loadPredictions(previewHorizon);
@@ -608,15 +672,44 @@ const overlayNetworkNodes = useMemo(
                   </p>
                 </div>
 
-                <span className="demo-badge">Neo4j live data</span>
+                <div className="network-heading-actions">
+                  <div className="view-switch" aria-label="Network view">
+                    <button
+                      type="button"
+                      className={networkView === "map" ? "active" : ""}
+                      onClick={() => setNetworkView("map")}
+                      aria-pressed={networkView === "map"}
+                    >
+                      Map
+                    </button>
+                    <button
+                      type="button"
+                      className={networkView === "topology" ? "active" : ""}
+                      onClick={() => setNetworkView("topology")}
+                      aria-pressed={networkView === "topology"}
+                    >
+                      Topology
+                    </button>
+                  </div>
+                  <span className="demo-badge">Neo4j live data</span>
+                </div>
               </div>
 
-              <NetworkGraph
-                selectedNode={selectedNode}
-                onSelectNode={handleSelectNode}
-                networkNodes={overlayNetworkNodes}
-                networkEdges={networkEdges}
-              />
+              {networkView === "map" ? (
+                <NetworkGraph
+                  selectedNode={selectedNode}
+                  onSelectNode={handleSelectNode}
+                  networkNodes={overlayNetworkNodes}
+                  networkEdges={networkEdges}
+                />
+              ) : (
+                <TopologyGraph
+                  selectedNode={selectedNode}
+                  onSelectNode={handleSelectNode}
+                  networkNodes={overlayNetworkNodes}
+                  networkEdges={networkEdges}
+                />
+              )}
 
               <div className="supplier-details-panel">
                 <div className="panel-heading">
@@ -709,11 +802,11 @@ const overlayNetworkNodes = useMemo(
             </article>
 
             <div className="side-panels">
-              <article className="panel disruptions-panel" id="disruptions">
+              <article className="panel disruptions-panel signals-panel" id="disruptions">
                 <div className="panel-heading">
                   <div>
-                    <h2>Active disruptions</h2>
-                    <p>Live signals from Neo4j</p>
+                    <h2>Live intelligence</h2>
+                    <p>RSS analysis and Neo4j events</p>
                   </div>
 
                   <span className="open-badge">
@@ -721,7 +814,86 @@ const overlayNetworkNodes = useMemo(
                   </span>
                 </div>
 
-                <div className="disruption-list">
+                <div className="signal-tabs" role="tablist">
+                  <button
+                    type="button"
+                    role="tab"
+                    className={signalTab === "news" ? "active" : ""}
+                    aria-selected={signalTab === "news"}
+                    onClick={() => setSignalTab("news")}
+                  >
+                    <Newspaper size={14} /> News feed
+                  </button>
+                  <button
+                    type="button"
+                    role="tab"
+                    className={signalTab === "disruptions" ? "active" : ""}
+                    aria-selected={signalTab === "disruptions"}
+                    onClick={() => setSignalTab("disruptions")}
+                  >
+                    <AlertTriangle size={14} /> Disruptions
+                  </button>
+                </div>
+
+                {signalTab === "news" && (
+                  <div className="news-feed-list">
+                    <div className="feed-status-row">
+                      <span><i className={newsError ? "error" : ""} />Allowlisted RSS</span>
+                      <button type="button" onClick={loadNewsFeed} disabled={newsLoading}>
+                        {newsLoading ? "Analysing…" : "Refresh"}
+                      </button>
+                    </div>
+
+                    {newsError && <p className="feed-error">{newsError}</p>}
+                    {!newsLoading && !newsError && newsArticles.length === 0 && (
+                      <p className="feed-empty">No articles returned by the configured feed.</p>
+                    )}
+
+                    {newsArticles.map((article) => {
+                      const analysis = article.analysis;
+                      const classification = analysis.classification || {};
+                      const mapped = Boolean(
+                        classification.detected && analysis.affected_node_ids?.length
+                      );
+                      const articleKey = analysis.url || `${analysis.title}-${article.published}`;
+                      return (
+                        <article className="news-card" key={articleKey}>
+                          <div className="news-card-meta">
+                            <span className={`news-severity ${classification.risk_level || "low"}`}>
+                              {classification.risk_level || "informational"}
+                            </span>
+                            <span>{analysis.source || "RSS"}</span>
+                            <time>{article.published || "Recent"}</time>
+                          </div>
+                          <h3>{analysis.title || "Untitled supply-chain update"}</h3>
+                          <p>
+                            {classification.detected
+                              ? `${String(classification.type || "disruption").replaceAll("_", " ")} · ${analysis.affected_node_ids.length} mapped node(s)`
+                              : "No recognised disruption in this article"}
+                          </p>
+                          <div className="news-card-actions">
+                            {analysis.url ? (
+                              <a href={analysis.url} target="_blank" rel="noreferrer">Source</a>
+                            ) : <span />}
+                            <button
+                              type="button"
+                              disabled={!mapped || ingestingArticle === articleKey}
+                              onClick={() => ingestArticle(article)}
+                            >
+                              {!mapped
+                                ? "No mapped event"
+                                : ingestingArticle === articleKey
+                                  ? "Ingesting…"
+                                  : "Simulate impact"}
+                            </button>
+                          </div>
+                        </article>
+                      );
+                    })}
+                  </div>
+                )}
+
+                {signalTab === "disruptions" && <div className="disruption-list">
                   {disruptionsLoading && (
                     <p>Loading disruptions...</p>
                   )}
@@ -784,7 +956,7 @@ const overlayNetworkNodes = useMemo(
                         </article>
                       );
                     })}
-                </div>
+                </div>}
               </article>
 
               <article className="panel prediction-panel" id="predictions">
