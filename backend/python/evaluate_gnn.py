@@ -10,6 +10,7 @@ from backend.python.config import (
     GNN_MODEL,
     GNN_PREDICTIONS,
     TEST_FILE,
+    TRAIN_FILE,
 )
 from backend.python.gnn_model import RippleGCN
 from backend.python.scenario_graph import build_scenario_graph
@@ -24,6 +25,15 @@ def main():
     rows = load_rows(TEST_FILE)
     targets = build_targets(rows, node_mapping)
     scenarios = get_scenario_info(rows)
+    training_targets = build_targets(load_rows(TRAIN_FILE), node_mapping)
+    training_values = [
+        value
+        for scenario_targets in training_targets.values()
+        for value in scenario_targets.values()
+    ]
+    if not training_values:
+        raise RuntimeError("Training split produced no baseline targets")
+    baseline_mean = sum(training_values) / len(training_values)
 
     missing_scenarios = sorted(set(scenarios) - set(targets))
     if missing_scenarios:
@@ -40,6 +50,8 @@ def main():
     absolute_errors = []
     squared_errors = []
     results = []
+    actual_values = []
+    predicted_values = []
 
     with torch.no_grad():
         for scenario_id, scenario in scenarios.items():
@@ -57,6 +69,8 @@ def main():
                 error = predicted - actual
                 absolute_errors.append(abs(error))
                 squared_errors.append(error**2)
+                actual_values.append(actual)
+                predicted_values.append(predicted)
                 node = nodes[node_index]
                 results.append(
                     {
@@ -74,11 +88,35 @@ def main():
 
     mae = sum(absolute_errors) / len(absolute_errors)
     rmse = math.sqrt(sum(squared_errors) / len(squared_errors))
+    mean_actual = sum(actual_values) / len(actual_values)
+    total_variance = sum((value - mean_actual) ** 2 for value in actual_values)
+    residual_variance = sum(
+        (predicted - actual) ** 2
+        for actual, predicted in zip(actual_values, predicted_values)
+    )
+    r2 = 1 - (residual_variance / total_variance) if total_variance else 0.0
+    baseline_absolute_errors = [
+        abs(actual - baseline_mean) for actual in actual_values
+    ]
+    baseline_squared_errors = [
+        (actual - baseline_mean) ** 2 for actual in actual_values
+    ]
+    baseline_mae = sum(baseline_absolute_errors) / len(baseline_absolute_errors)
+    baseline_rmse = math.sqrt(
+        sum(baseline_squared_errors) / len(baseline_squared_errors)
+    )
     metrics = {
         "test_scenarios": len(scenarios),
         "test_predictions": len(results),
         "mae": round(mae, 6),
         "rmse": round(rmse, 6),
+        "r2": round(r2, 6),
+        "baseline": "training-target mean",
+        "baseline_mean": round(baseline_mean, 6),
+        "baseline_mae": round(baseline_mae, 6),
+        "baseline_rmse": round(baseline_rmse, 6),
+        "mae_improvement_pct": round((1 - mae / baseline_mae) * 100, 2),
+        "rmse_improvement_pct": round((1 - rmse / baseline_rmse) * 100, 2),
         "model": str(GNN_MODEL.name),
         "graph_nodes": len(nodes),
         "graph_relationships": len(relationships),
@@ -96,6 +134,11 @@ def main():
     print("Test predictions:", metrics["test_predictions"])
     print("MAE:", metrics["mae"])
     print("RMSE:", metrics["rmse"])
+    print("R²:", metrics["r2"])
+    print("Baseline MAE:", metrics["baseline_mae"])
+    print("Baseline RMSE:", metrics["baseline_rmse"])
+    print("MAE improvement:", f"{metrics['mae_improvement_pct']}%")
+    print("RMSE improvement:", f"{metrics['rmse_improvement_pct']}%")
     print("Metrics saved to:", GNN_METRICS)
     print("Predictions saved to:", GNN_PREDICTIONS)
 

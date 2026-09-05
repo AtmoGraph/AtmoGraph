@@ -3,6 +3,13 @@
   "test_predictions": 160,
   "mae": 0.009256,
   "rmse": 0.011282,
+  "r2": 0.948684,
+  "baseline": "training-target mean",
+  "baseline_mean": 0.27669,
+  "baseline_mae": 0.038189,
+  "baseline_rmse": 0.050464,
+  "mae_improvement_pct": 75.76,
+  "rmse_improvement_pct": 77.64,
   "model": "ripple_gnn.pt",
   "graph_nodes": 25,
   "graph_relationships": 25
