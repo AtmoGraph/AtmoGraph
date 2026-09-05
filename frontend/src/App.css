@@ -2307,3 +2307,249 @@ body {
     grid-area: prediction;
   }
 }
+
+/* Week 4 intelligence and topology views */
+.network-heading-actions,
+.view-switch,
+.signal-tabs,
+.feed-status-row,
+.news-card-actions {
+  display: flex;
+  align-items: center;
+}
+
+.network-heading-actions {
+  gap: 10px;
+}
+
+.view-switch {
+  padding: 3px;
+  gap: 2px;
+  border: 1px solid #294b6d;
+  border-radius: 10px;
+  background: #071a2e;
+}
+
+.view-switch button,
+.signal-tabs button,
+.feed-status-row button,
+.news-card-actions button {
+  border: 0;
+  color: #8eb0d3;
+  background: transparent;
+  cursor: pointer;
+}
+
+.view-switch button {
+  padding: 6px 10px;
+  border-radius: 7px;
+  font-size: 11px;
+  font-weight: 700;
+}
+
+.view-switch button.active {
+  color: #dff8ff;
+  background: #163f5e;
+  box-shadow: inset 0 0 0 1px #2f86a8;
+}
+
+.topology-wrap {
+  position: relative;
+  min-height: 520px;
+  overflow: hidden;
+  background:
+    radial-gradient(circle at 50% 48%, rgba(31, 100, 139, 0.2), transparent 48%),
+    linear-gradient(rgba(30, 61, 89, 0.16) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(30, 61, 89, 0.16) 1px, transparent 1px),
+    #07182a;
+  background-size: auto, 44px 44px, 44px 44px, auto;
+}
+
+.topology-graph {
+  display: block;
+  width: 100%;
+  min-height: 520px;
+}
+
+.topology-links line {
+  stroke: #3c7394;
+  stroke-width: 1.5;
+  opacity: 0.72;
+}
+
+.topology-node {
+  cursor: pointer;
+  outline: none;
+}
+
+.topology-node circle {
+  fill: #54c8f2;
+  stroke: #d8f7ff;
+  stroke-width: 2;
+  filter: drop-shadow(0 0 7px rgba(84, 200, 242, 0.65));
+}
+
+.topology-node.risk-medium circle { fill: #ffa93b; stroke: #ffe1a8; }
+.topology-node.risk-high circle { fill: #ff6573; stroke: #ffd0d5; }
+.topology-node.selected circle { stroke-width: 4; filter: drop-shadow(0 0 12px #fff); }
+
+.topology-node text {
+  fill: #e8f1ff;
+  font-size: 12px;
+  font-weight: 700;
+  paint-order: stroke;
+  stroke: #071525;
+  stroke-width: 4px;
+}
+
+.topology-node .topology-node-type {
+  fill: #7fa4c6;
+  font-size: 9px;
+  font-weight: 600;
+}
+
+.topology-legend {
+  position: absolute;
+  right: 18px;
+  bottom: 16px;
+  display: flex;
+  gap: 14px;
+  padding: 8px 12px;
+  border: 1px solid #284863;
+  border-radius: 10px;
+  color: #9ab3cb;
+  background: rgba(5, 21, 37, 0.9);
+  font-size: 11px;
+}
+
+.topology-legend span { display: flex; align-items: center; gap: 6px; }
+.topology-legend i { width: 8px; height: 8px; border-radius: 50%; background: #54c8f2; }
+.topology-legend i.medium { background: #ffa93b; }
+.topology-legend i.high { background: #ff6573; }
+.topology-empty { min-height: 520px; display: grid; place-items: center; color: #89a9c7; }
+
+.signal-tabs {
+  gap: 5px;
+  padding: 8px 10px;
+  border-bottom: 1px solid #244461;
+  background: #091b2f;
+}
+
+.signal-tabs button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  flex: 1;
+  padding: 8px;
+  border-radius: 7px;
+  font-size: 11px;
+  font-weight: 700;
+}
+
+.signal-tabs button.active { color: #dff8ff; background: #173a58; }
+.news-feed-list { max-height: 540px; overflow: auto; }
+
+.feed-status-row {
+  justify-content: space-between;
+  padding: 10px 12px;
+  color: #67d6ad;
+  font-size: 10px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: .08em;
+}
+
+.feed-status-row span { display: flex; align-items: center; gap: 6px; }
+.feed-status-row i { width: 7px; height: 7px; border-radius: 50%; background: #39d795; box-shadow: 0 0 8px #39d795; }
+.feed-status-row i.error { background: #ff6875; box-shadow: 0 0 8px #ff6875; }
+.feed-status-row button { color: #77ccef; font-size: 10px; font-weight: 700; }
+.feed-status-row button:disabled { opacity: .5; cursor: wait; }
+.feed-error, .feed-empty { margin: 4px 12px 12px; color: #ff929d; font-size: 11px; line-height: 1.45; }
+.feed-empty { color: #87a5c1; }
+
+.news-card {
+  padding: 12px;
+  border-top: 1px solid #1f3b56;
+  background: linear-gradient(110deg, rgba(16, 46, 72, .45), transparent);
+}
+
+.news-card-meta { display: flex; align-items: center; gap: 7px; color: #6f91b1; font-size: 9px; }
+.news-card-meta time { margin-left: auto; }
+.news-severity { padding: 3px 6px; border-radius: 5px; color: #97b6d4; background: #17334e; font-weight: 800; text-transform: uppercase; }
+.news-severity.medium { color: #ffbf66; background: rgba(255, 169, 59, .13); }
+.news-severity.high, .news-severity.critical { color: #ff8490; background: rgba(255, 101, 115, .13); }
+.news-card h3 { margin: 9px 0 6px; color: #f3d8e1; font-size: 12px; line-height: 1.35; }
+.news-card p { margin: 0; color: #78a4c9; font-size: 10px; line-height: 1.45; text-transform: capitalize; }
+.news-card-actions { justify-content: space-between; margin-top: 10px; }
+.news-card-actions a { color: #75badb; font-size: 10px; text-decoration: none; }
+.news-card-actions button { padding: 6px 9px; border: 1px solid #28668a; border-radius: 7px; color: #7fe3ff; background: #0d2c45; font-size: 10px; font-weight: 700; }
+.news-card-actions button:disabled { color: #627f99; border-color: #203c55; background: #0a2035; cursor: not-allowed; }
+
+@media (max-width: 900px) {
+  .network-heading-actions { align-items: flex-end; flex-direction: column-reverse; }
+  .topology-wrap, .topology-graph, .topology-empty { min-height: 420px; }
+}
+
+.prediction-live-actions {
+  display: flex;
+  flex: 0 0 auto;
+  align-items: center;
+  gap: 7px;
+}
+
+.stream-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 5px 7px;
+  border: 1px solid rgba(131, 166, 206, 0.25);
+  border-radius: 999px;
+  color: var(--muted);
+  background: rgba(8, 25, 43, 0.8);
+  font-size: 0.58rem;
+  font-weight: 800;
+  text-transform: uppercase;
+}
+
+.stream-badge > span {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: currentColor;
+}
+
+.stream-badge.live {
+  color: #43d7a0;
+  border-color: rgba(67, 215, 160, 0.35);
+}
+
+.stream-badge.reconnecting {
+  color: #ffad4d;
+}
+
+.prediction-panel .live-action {
+  width: auto;
+  min-width: 88px;
+  min-height: 28px;
+  padding: 5px 9px;
+  border: 1px solid rgba(121, 201, 255, 0.42);
+  border-radius: 7px;
+  color: #ccecff;
+  background: rgba(28, 84, 119, 0.72);
+  cursor: pointer;
+  font: inherit;
+  font-size: 0.62rem;
+  font-weight: 800;
+  line-height: 1;
+}
+
+.prediction-panel .live-action:hover:not(:disabled) {
+  border-color: #79c9ff;
+  background: rgba(34, 106, 148, 0.9);
+}
+
+.prediction-panel .live-action:disabled {
+  cursor: not-allowed;
+  opacity: 0.55;
+}

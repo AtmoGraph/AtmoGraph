@@ -1,5 +1,8 @@
+from functools import lru_cache
+from typing import Literal
+
 import torch
-from pydantic import BaseModel
+from pydantic import BaseModel, Field
 
 from backend.python.canonical_gnn_graph import load_canonical_gnn_graph
 from backend.python.scenario_graph import (
@@ -12,9 +15,19 @@ from backend.python.config import GNN_MODEL
 class PredictionRequest(BaseModel):
     disrupted_port_id: str
     disruption_type: str
-    severity: float
+    severity: float = Field(ge=0.0, le=1.0)
+    horizon_days: Literal[30, 60, 90] = 30
 
 
+HORIZON_FACTORS = {
+    30: 1.0,
+    60: 0.82,
+    90: 0.68,
+}
+PROJECTION_METHOD = "gnn_recovery_curve_v1"
+
+
+@lru_cache(maxsize=1)
 def load_gnn_model():
     model = RippleGCN(input_features=23)
 
@@ -94,10 +107,43 @@ def generate_predictions(
     return results
 
 
+def project_predictions(predictions, horizon_days):
+    """Project the validated 30-day GNN impact through a recovery curve.
+
+    The committed model was not trained with a horizon feature.  These values
+    therefore remain transparent operational projections rather than separate
+    learned forecasts.
+    """
+    try:
+        factor = HORIZON_FACTORS[horizon_days]
+    except KeyError as error:
+        raise ValueError(
+            "horizon_days must be one of: 30, 60, 90"
+        ) from error
+
+    projected = []
+    for item in predictions:
+        base_prediction = float(item["prediction"])
+        projected.append(
+            {
+                **item,
+                "base_prediction": round(base_prediction, 4),
+                "prediction": round(base_prediction * factor, 4),
+                "horizon_days": horizon_days,
+            }
+        )
+
+    projected.sort(
+        key=lambda item: item["prediction"],
+        reverse=True,
+    )
+    return projected
+
+
 def predict_scenario(
     request: PredictionRequest,
 ):
-    predictions = generate_predictions(
+    base_predictions = generate_predictions(
         disrupted_port_id=(
             request.disrupted_port_id
         ),
@@ -105,6 +151,10 @@ def predict_scenario(
             request.disruption_type
         ),
         severity=request.severity,
+    )
+    predictions = project_predictions(
+        base_predictions,
+        request.horizon_days,
     )
 
     return {
@@ -116,7 +166,13 @@ def predict_scenario(
                 request.disruption_type
             ),
             "severity": request.severity,
+            "horizon_days": request.horizon_days,
         },
+        "projection_method": PROJECTION_METHOD,
+        "projection_note": (
+            "The GNN supplies the validated baseline impact; 60/90-day "
+            "values apply a transparent operational recovery curve."
+        ),
         "total_nodes": len(predictions),
         "predictions": predictions,
         "top_impacted_nodes": predictions[:10],

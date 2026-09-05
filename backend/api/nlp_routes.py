@@ -5,11 +5,55 @@ from backend.nlp.neo4j_writer import write_analysis
 from backend.nlp.pipeline import analyze_news
 
 from backend.nlp.feed_ingestor import FEED_SOURCES, fetch_feed
+from backend.api.prediction import PredictionRequest, predict_scenario
+from backend.api.realtime import publish_event
 
 router = APIRouter(
     prefix="/api/nlp",
     tags=["NLP"],
 )
+
+
+PORT_ALIASES = {
+    "port-rotterdam": "PORT003",
+}
+
+MODEL_DISRUPTION_TYPES = {
+    "labour_strike": "PORT_STRIKE",
+    "extreme_weather": "SEVERE_WEATHER",
+    "fire_or_explosion": "INFRASTRUCTURE_FAILURE",
+    "port_congestion": "PORT_CLOSURE",
+    "capacity_reduction": "PORT_CLOSURE",
+    "transport_delay": "PORT_CLOSURE",
+    "sanctions": "PORT_CLOSURE",
+}
+
+
+def _prediction_for_analysis(analysis, horizon_days=30):
+    live_port_id = next(
+        (
+            node_id
+            for node_id in analysis["affected_node_ids"]
+            if node_id in PORT_ALIASES
+        ),
+        None,
+    )
+    if live_port_id is None:
+        return None
+
+    classification = analysis["classification"]
+    model_type = MODEL_DISRUPTION_TYPES.get(classification["type"])
+    if model_type is None:
+        return None
+
+    return predict_scenario(
+        PredictionRequest(
+            disrupted_port_id=PORT_ALIASES[live_port_id],
+            disruption_type=model_type,
+            severity=classification["risk_score"],
+            horizon_days=horizon_days,
+        )
+    )
 
 
 class NewsRequest(BaseModel):
@@ -47,9 +91,20 @@ def ingest_news_text(request: NewsRequest):
 
         database_result = write_analysis(analysis)
 
+        prediction = _prediction_for_analysis(analysis)
+        publish_event(
+            "disruption.ingested",
+            {
+                "analysis": analysis,
+                "database": database_result,
+                "prediction": prediction,
+            },
+        )
+
         return {
             "analysis": analysis,
             "database": database_result,
+            "prediction": prediction,
         }
     except ValueError as error:
         raise HTTPException(

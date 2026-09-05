@@ -2,6 +2,7 @@ import {
   useCallback,
   useEffect,
   useMemo,
+  useRef,
   useState,
 } from "react";
 import {
@@ -14,20 +15,15 @@ import {
   Route,
   Search,
   Ship,
+  Newspaper,
   Warehouse,
 } from "lucide-react";
 
 import NetworkGraph from "./components/NetworkGraph";
+import TopologyGraph from "./components/TopologyGraph";
 import { apiFetch, useAuth } from "./auth";
 import "./App.css";
 import "./ControlRoom.css";
-
-const exposureData = [
-  { label: "Ports", count: 8, percentage: 86 },
-  { label: "Suppliers", count: 5, percentage: 58 },
-  { label: "Factories", count: 3, percentage: 35 },
-  { label: "Markets", count: 2, percentage: 23 },
-];
 
 function formatCapacity(value) {
   if (value === undefined || value === null) {
@@ -74,6 +70,7 @@ function App() {
   const [accountMenuOpen, setAccountMenuOpen] = useState(false);
   const [networkNodes, setNetworkNodes] = useState([]);
   const [networkEdges, setNetworkEdges] = useState([]);
+  const [graphSummary, setGraphSummary] = useState(null);
   const [selectedNode, setSelectedNode] = useState(null);
   const [searchTerm, setSearchTerm] = useState("");
   const [disruptions, setDisruptions] = useState([]);
@@ -83,6 +80,17 @@ function App() {
   const [predictionLoading, setPredictionLoading] = useState(true);
   const [predictionError, setPredictionError] = useState("");
   const [previewHorizon, setPreviewHorizon] = useState(30);
+  const [realtimeStatus, setRealtimeStatus] = useState("connecting");
+  const [lastRealtimeEvent, setLastRealtimeEvent] = useState(null);
+  const [predictionScenario, setPredictionScenario] = useState(null);
+  const [livePublishing, setLivePublishing] = useState(false);
+  const [networkView, setNetworkView] = useState("map");
+  const [signalTab, setSignalTab] = useState("news");
+  const [newsArticles, setNewsArticles] = useState([]);
+  const [newsLoading, setNewsLoading] = useState(false);
+  const [newsError, setNewsError] = useState("");
+  const [ingestingArticle, setIngestingArticle] = useState("");
+  const latestEventId = useRef(0);
 
   const predictionByNodeId = useMemo(
   () =>
@@ -123,16 +131,37 @@ const overlayNetworkNodes = useMemo(
   [networkNodes, predictionByNodeId]
 );
 
-  const activeNodes = networkNodes.length;
+  const activeNodes =
+    graphSummary?.supply_chain_nodes ??
+    networkNodes.filter((node) => node.type !== "Disruption").length;
 
-  const atRiskNodes = networkNodes.filter((node) => {
-    const riskScore = Number(node.properties?.risk_score ?? 0);
-    return riskScore >= 0.2;
-  }).length;
+  const atRiskNodes = graphSummary?.at_risk_nodes ?? 0;
 
-  const activeRoutes = networkNodes.filter(
-    (node) => node.type === "ShippingRoute"
-  ).length;
+  const activeRoutes = graphSummary?.operational_relationships ?? 0;
+
+  const exposureData = useMemo(() => {
+    const labels = {
+      Port: "Ports",
+      Supplier: "Suppliers",
+      Factory: "Factories",
+      DistributionCentre: "Distribution centres",
+      Market: "Markets",
+    };
+    const entries = Object.entries(graphSummary?.node_types || {})
+      .filter(([type]) => labels[type])
+      .map(([type, count]) => ({
+        label: labels[type],
+        count,
+      }));
+    const maximum = Math.max(
+      1,
+      ...entries.map((item) => item.count)
+    );
+    return entries.map((item) => ({
+      ...item,
+      percentage: (item.count / maximum) * 100,
+    }));
+  }, [graphSummary]);
 
   const networkHealth =
     activeNodes > 0 ? "Operational" : "Unavailable";
@@ -148,14 +177,14 @@ const overlayNetworkNodes = useMemo(
     {
       label: "At-risk nodes",
       value: atRiskNodes,
-      note: "Risk Score ≥ 0.20",
+      note: "Medium/high risk · score ≥ 0.40",
       icon: AlertTriangle,
       tone: "red",
     },
     {
       label: "Active routes",
       value: activeRoutes,
-      note: "Shipping routes in graph",
+      note: "Operational relationships",
       icon: Route,
       tone: "purple",
     },
@@ -168,8 +197,7 @@ const overlayNetworkNodes = useMemo(
     },
   ];
 
-  useEffect(() => {
-    const loadBackendData = async () => {
+  const loadBackendData = useCallback(async () => {
       try {
         const healthResponse = await apiFetch("/api/health");
 
@@ -187,6 +215,7 @@ const overlayNetworkNodes = useMemo(
 
         setNetworkNodes(graphData.nodes || []);
         setNetworkEdges(graphData.edges || []);
+        setGraphSummary(graphData.summary || null);
 
         const defaultNode = (graphData.nodes || []).find(
           (node) => node.id === "PORT003"
@@ -198,13 +227,9 @@ const overlayNetworkNodes = useMemo(
       } catch (error) {
         console.error("Backend connection error:", error);
       }
-    };
-
-    loadBackendData();
   }, []);
 
-  useEffect(() => {
-    const loadDisruptions = async () => {
+  const loadDisruptions = useCallback(async () => {
       try {
         setDisruptionsLoading(true);
         setDisruptionsError("");
@@ -225,13 +250,80 @@ const overlayNetworkNodes = useMemo(
       } finally {
         setDisruptionsLoading(false);
       }
-    };
-
-    loadDisruptions();
   }, []);
 
-  useEffect(() => {
-    const loadPredictions = async () => {
+  const loadNewsFeed = useCallback(async () => {
+    try {
+      setNewsLoading(true);
+      setNewsError("");
+      const feedsResponse = await apiFetch("/api/nlp/feeds");
+      if (!feedsResponse.ok) throw new Error("Feed catalogue unavailable");
+      const feedsData = await feedsResponse.json();
+      const feed = feedsData.feeds?.[0];
+      if (!feed) throw new Error("No RSS feed is configured");
+
+      const response = await apiFetch(
+        `/api/nlp/feeds/${encodeURIComponent(feed.key)}/analyze?limit=6`,
+        { method: "POST" }
+      );
+      if (!response.ok) {
+        const detail = await response.json().catch(() => ({}));
+        throw new Error(detail.detail || "RSS analysis failed");
+      }
+      const data = await response.json();
+      setNewsArticles(data.articles || []);
+    } catch (error) {
+      console.error("News feed error:", error);
+      setNewsError(error.message || "Unable to load the live feed");
+      setNewsArticles([]);
+    } finally {
+      setNewsLoading(false);
+    }
+  }, []);
+
+  const ingestArticle = async (article) => {
+    const analysis = article.analysis;
+    try {
+      setIngestingArticle(analysis.url || analysis.title);
+      setNewsError("");
+      const response = await apiFetch("/api/nlp/ingest", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          title: analysis.title,
+          text: analysis.text,
+          source: analysis.source,
+          url: analysis.url,
+        }),
+      });
+      if (!response.ok) throw new Error("Article ingestion failed");
+      await Promise.all([loadBackendData(), loadDisruptions()]);
+      setSignalTab("disruptions");
+    } catch (error) {
+      console.error("Article ingestion error:", error);
+      setNewsError(error.message || "Unable to ingest article");
+    } finally {
+      setIngestingArticle("");
+    }
+  };
+
+  const applyPredictionData = useCallback((data) => {
+    setPredictions(
+      (data.top_impacted_nodes || []).filter(
+        (item) => item.node_type !== "Disruption"
+      )
+    );
+    setPredictionScenario(data.scenario || null);
+  }, []);
+
+  const loadPredictions = useCallback(async (
+    horizonDays,
+    scenario = {
+      disrupted_port_id: "PORT003",
+      disruption_type: "PORT_CLOSURE",
+      severity: 0.95,
+    }
+  ) => {
       try {
         setPredictionLoading(true);
         setPredictionError("");
@@ -244,9 +336,10 @@ const overlayNetworkNodes = useMemo(
               "Content-Type": "application/json",
             },
             body: JSON.stringify({
-              disrupted_port_id: "PORT003",
-              disruption_type: "PORT_CLOSURE",
-              severity: 0.95,
+              disrupted_port_id: scenario.disrupted_port_id,
+              disruption_type: scenario.disruption_type,
+              severity: scenario.severity,
+              horizon_days: horizonDays,
             }),
           }
         );
@@ -257,11 +350,7 @@ const overlayNetworkNodes = useMemo(
 
         const data = await response.json();
 
-        setPredictions(
-  (data.top_impacted_nodes || []).filter(
-    (item) => item.node_type !== "Disruption"
-  )
-);
+        applyPredictionData(data);
       } catch (error) {
         console.error("Prediction API error:", error);
         setPredictionError("Unable to load AI predictions");
@@ -269,10 +358,131 @@ const overlayNetworkNodes = useMemo(
       } finally {
         setPredictionLoading(false);
       }
+  }, [applyPredictionData]);
+
+  useEffect(() => {
+    loadBackendData();
+    loadDisruptions();
+    loadNewsFeed();
+  }, [loadBackendData, loadDisruptions, loadNewsFeed]);
+
+  useEffect(() => {
+    loadPredictions(previewHorizon);
+  }, [loadPredictions, previewHorizon]);
+
+  useEffect(() => {
+    const controller = new AbortController();
+    let reconnectTimer;
+
+    const connect = async () => {
+      try {
+        setRealtimeStatus("connecting");
+        const response = await apiFetch("/api/realtime/events", {
+          headers: {
+            Accept: "text/event-stream",
+            ...(latestEventId.current
+              ? { "Last-Event-ID": String(latestEventId.current) }
+              : {}),
+          },
+          signal: controller.signal,
+        });
+
+        if (!response.ok || !response.body) {
+          throw new Error("Real-time stream unavailable");
+        }
+
+        setRealtimeStatus("live");
+        const reader = response.body.getReader();
+        const decoder = new TextDecoder();
+        let buffer = "";
+
+        while (!controller.signal.aborted) {
+          const { value, done } = await reader.read();
+          if (done) break;
+          buffer += decoder.decode(value, { stream: true });
+
+          let boundary = buffer.indexOf("\n\n");
+          while (boundary !== -1) {
+            const block = buffer.slice(0, boundary);
+            buffer = buffer.slice(boundary + 2);
+            boundary = buffer.indexOf("\n\n");
+
+            const dataLine = block
+              .split("\n")
+              .find((line) => line.startsWith("data: "));
+            if (!dataLine) continue;
+
+            const event = JSON.parse(dataLine.slice(6));
+            latestEventId.current = event.id;
+            setLastRealtimeEvent(event.created_at);
+
+            if (event.type === "prediction.updated") {
+              const data = event.payload?.prediction;
+              if (data?.scenario?.horizon_days === previewHorizon) {
+                applyPredictionData(data);
+              }
+            }
+
+            if (event.type === "disruption.ingested") {
+              await Promise.all([
+                loadBackendData(),
+                loadDisruptions(),
+              ]);
+              const liveScenario = event.payload?.prediction?.scenario;
+              if (liveScenario) {
+                await loadPredictions(previewHorizon, liveScenario);
+              }
+            }
+          }
+        }
+
+        if (!controller.signal.aborted) {
+          throw new Error("Real-time stream ended");
+        }
+      } catch (error) {
+        if (controller.signal.aborted) return;
+        console.error("Real-time stream error:", error);
+        setRealtimeStatus("reconnecting");
+        reconnectTimer = window.setTimeout(connect, 3000);
+      }
     };
 
-    loadPredictions();
-  }, []);
+    connect();
+    return () => {
+      controller.abort();
+      window.clearTimeout(reconnectTimer);
+    };
+  }, [
+    applyPredictionData,
+    loadBackendData,
+    loadDisruptions,
+    loadPredictions,
+    previewHorizon,
+  ]);
+
+  const publishLiveScenario = async () => {
+    try {
+      setLivePublishing(true);
+      setPredictionError("");
+      const response = await apiFetch("/api/realtime/scenarios", {
+        method: "POST",
+        body: JSON.stringify({
+          disrupted_port_id: "PORT003",
+          disruption_type: "PORT_CLOSURE",
+          severity: 0.95,
+          horizon_days: previewHorizon,
+        }),
+      });
+      if (!response.ok) {
+        throw new Error("Could not publish live scenario");
+      }
+    } catch (error) {
+      console.error("Live scenario error:", error);
+      setPredictionError("Unable to publish live scenario");
+    } finally {
+      setLivePublishing(false);
+    }
+  };
 
   const handleSelectNode = useCallback((node) => {
     setSelectedNode(node);
@@ -334,7 +544,12 @@ const overlayNetworkNodes = useMemo(
             Systems operational
           </p>
 
-          <small>Backend connected</small>
+          <small>Real-time: {realtimeStatus}</small>
+          <small>
+            {lastRealtimeEvent
+              ? `Last event ${new Date(lastRealtimeEvent).toLocaleTimeString()}`
+              : "Waiting for live events"}
+          </small>
           <small>AtmoGraph  v0.1.0</small>
         </div>
       </aside>
@@ -368,7 +583,7 @@ const overlayNetworkNodes = useMemo(
           <div className="timeline-control" aria-label="Prediction horizon preview">
             <div className="timeline-control-heading">
               <span>Timeline</span>
-              <small>Preview</small>
+              <small>Projection</small>
             </div>
 
             <div className="timeline-options">
@@ -457,15 +672,44 @@ const overlayNetworkNodes = useMemo(
                   </p>
                 </div>
 
-                <span className="demo-badge">Neo4j live data</span>
+                <div className="network-heading-actions">
+                  <div className="view-switch" aria-label="Network view">
+                    <button
+                      type="button"
+                      className={networkView === "map" ? "active" : ""}
+                      onClick={() => setNetworkView("map")}
+                      aria-pressed={networkView === "map"}
+                    >
+                      Map
+                    </button>
+                    <button
+                      type="button"
+                      className={networkView === "topology" ? "active" : ""}
+                      onClick={() => setNetworkView("topology")}
+                      aria-pressed={networkView === "topology"}
+                    >
+                      Topology
+                    </button>
+                  </div>
+                  <span className="demo-badge">Neo4j live data</span>
+                </div>
               </div>
 
-              <NetworkGraph
-                selectedNode={selectedNode}
-                onSelectNode={handleSelectNode}
-                networkNodes={overlayNetworkNodes}
-                networkEdges={networkEdges}
-              />
+              {networkView === "map" ? (
+                <NetworkGraph
+                  selectedNode={selectedNode}
+                  onSelectNode={handleSelectNode}
+                  networkNodes={overlayNetworkNodes}
+                  networkEdges={networkEdges}
+                />
+              ) : (
+                <TopologyGraph
+                  selectedNode={selectedNode}
+                  onSelectNode={handleSelectNode}
+                  networkNodes={overlayNetworkNodes}
+                  networkEdges={networkEdges}
+                />
+              )}
 
               <div className="supplier-details-panel">
                 <div className="panel-heading">
@@ -482,6 +726,7 @@ const overlayNetworkNodes = useMemo(
   <span
     className={`risk-badge ${
       selectedNode.predictionRisk ||
+      selectedNode.properties?.risk ||
       selectedNode.risk ||
       "low"
     }`}
@@ -490,6 +735,7 @@ const overlayNetworkNodes = useMemo(
       ? "ML "
       : ""}
     {selectedNode.predictionRisk ||
+      selectedNode.properties?.risk ||
       selectedNode.risk ||
       "unknown"}{" "}
     risk
@@ -519,6 +765,7 @@ const overlayNetworkNodes = useMemo(
                       <strong>
                         {selectedNode.properties?.country ||
                           selectedNode.properties?.region ||
+                          selectedNode.properties?.location ||
                           "N/A"}
                       </strong>
                     </div>
@@ -555,11 +802,11 @@ const overlayNetworkNodes = useMemo(
             </article>
 
             <div className="side-panels">
-              <article className="panel disruptions-panel" id="disruptions">
+              <article className="panel disruptions-panel signals-panel" id="disruptions">
                 <div className="panel-heading">
                   <div>
-                    <h2>Active disruptions</h2>
-                    <p>Live signals from Neo4j</p>
+                    <h2>Live intelligence</h2>
+                    <p>RSS analysis and Neo4j events</p>
                   </div>
 
                   <span className="open-badge">
@@ -567,7 +814,86 @@ const overlayNetworkNodes = useMemo(
                   </span>
                 </div>
 
-                <div className="disruption-list">
+                <div className="signal-tabs" role="tablist">
+                  <button
+                    type="button"
+                    role="tab"
+                    className={signalTab === "news" ? "active" : ""}
+                    aria-selected={signalTab === "news"}
+                    onClick={() => setSignalTab("news")}
+                  >
+                    <Newspaper size={14} /> News feed
+                  </button>
+                  <button
+                    type="button"
+                    role="tab"
+                    className={signalTab === "disruptions" ? "active" : ""}
+                    aria-selected={signalTab === "disruptions"}
+                    onClick={() => setSignalTab("disruptions")}
+                  >
+                    <AlertTriangle size={14} /> Disruptions
+                  </button>
+                </div>
+
+                {signalTab === "news" && (
+                  <div className="news-feed-list">
+                    <div className="feed-status-row">
+                      <span><i className={newsError ? "error" : ""} />Allowlisted RSS</span>
+                      <button type="button" onClick={loadNewsFeed} disabled={newsLoading}>
+                        {newsLoading ? "Analysing…" : "Refresh"}
+                      </button>
+                    </div>
+
+                    {newsError && <p className="feed-error">{newsError}</p>}
+                    {!newsLoading && !newsError && newsArticles.length === 0 && (
+                      <p className="feed-empty">No articles returned by the configured feed.</p>
+                    )}
+
+                    {newsArticles.map((article) => {
+                      const analysis = article.analysis;
+                      const classification = analysis.classification || {};
+                      const mapped = Boolean(
+                        classification.detected && analysis.affected_node_ids?.length
+                      );
+                      const articleKey = analysis.url || `${analysis.title}-${article.published}`;
+                      return (
+                        <article className="news-card" key={articleKey}>
+                          <div className="news-card-meta">
+                            <span className={`news-severity ${classification.risk_level || "low"}`}>
+                              {classification.risk_level || "informational"}
+                            </span>
+                            <span>{analysis.source || "RSS"}</span>
+                            <time>{article.published || "Recent"}</time>
+                          </div>
+                          <h3>{analysis.title || "Untitled supply-chain update"}</h3>
+                          <p>
+                            {classification.detected
+                              ? `${String(classification.type || "disruption").replaceAll("_", " ")} · ${analysis.affected_node_ids.length} mapped node(s)`
+                              : "No recognised disruption in this article"}
+                          </p>
+                          <div className="news-card-actions">
+                            {analysis.url ? (
+                              <a href={analysis.url} target="_blank" rel="noreferrer">Source</a>
+                            ) : <span />}
+                            <button
+                              type="button"
+                              disabled={!mapped || ingestingArticle === articleKey}
+                              onClick={() => ingestArticle(article)}
+                            >
+                              {!mapped
+                                ? "No mapped event"
+                                : ingestingArticle === articleKey
+                                  ? "Ingesting…"
+                                  : "Simulate impact"}
+                            </button>
+                          </div>
+                        </article>
+                      );
+                    })}
+                  </div>
+                )}
+
+                {signalTab === "disruptions" && <div className="disruption-list">
                   {disruptionsLoading && (
                     <p>Loading disruptions...</p>
                   )}
@@ -630,28 +956,48 @@ const overlayNetworkNodes = useMemo(
                         </article>
                       );
                     })}
-                </div>
+                </div>}
               </article>
 
               <article className="panel prediction-panel" id="predictions">
                 <div className="panel-heading">
                   <div>
                     <h2>AI impact prediction</h2>
-                    <p>GNN prediction for Rotterdam Port Closure</p>
+                    <p>
+                      GNN projection · {previewHorizon}-day horizon
+                    </p>
                   </div>
 
-                  <span className="demo-badge">GNN live</span>
+                  <div className="prediction-live-actions">
+                    <span className={`stream-badge ${realtimeStatus}`}>
+                      <span />
+                      {realtimeStatus}
+                    </span>
+                    <button
+                      className="live-action"
+                      type="button"
+                      onClick={publishLiveScenario}
+                      disabled={livePublishing || realtimeStatus !== "live"}
+                    >
+                      {livePublishing ? "Publishing…" : "Simulate live"}
+                    </button>
+                  </div>
                 </div>
 
                 <div className="prediction-scenario">
                   <div className="prediction-scenario-main">
                     <span className="prediction-eyebrow">Scenario</span>
-                    <strong>PORT003 · Rotterdam Port</strong>
+                    <strong>
+                      {predictionScenario?.disrupted_port_id || "PORT003"}
+                      {" · Rotterdam Port"}
+                    </strong>
                   </div>
 
                   <span className="prediction-severity">
                     <span>Severity</span>
-                    95%
+                    {Math.round(
+                      Number(predictionScenario?.severity ?? 0.95) * 100
+                    )}%
                   </span>
                 </div>
 
@@ -760,6 +1106,7 @@ const overlayNetworkNodes = useMemo(
                     <span>
                       {node.properties?.country ||
                         node.properties?.region ||
+                        node.properties?.location ||
                         "Unknown"}
                     </span>
                   </button>

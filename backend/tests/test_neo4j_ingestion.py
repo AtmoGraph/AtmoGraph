@@ -1,5 +1,5 @@
 import pytest
-from neo4j.exceptions import Neo4jError
+from neo4j.exceptions import Neo4jError, ServiceUnavailable
 
 from backend.nlp.neo4j_writer import write_analysis
 from backend.nlp.pipeline import analyze_news
@@ -25,6 +25,7 @@ def test_repeated_ingestion_is_idempotent():
     )
 
     db = None
+    connected = False
     original_nodes = []
 
     try:
@@ -32,7 +33,8 @@ def test_repeated_ingestion_is_idempotent():
 
         try:
             db.verify_connection()
-        except Neo4jError as error:
+            connected = True
+        except (Neo4jError, ServiceUnavailable) as error:
             pytest.skip(f"Neo4j is unavailable: {error}")
 
         records, _, _ = db.driver.execute_query(
@@ -85,7 +87,7 @@ def test_repeated_ingestion_is_idempotent():
         assert set(result["affected_node_ids"]) == EXPECTED_NODE_IDS
 
     finally:
-        if db is not None:
+        if db is not None and connected:
             if analysis:
                 db.driver.execute_query(
                     """
@@ -113,4 +115,6 @@ def test_repeated_ingestion_is_idempotent():
                     database_="neo4j",
                 )
 
+            db.close()
+        elif db is not None:
             db.close()
