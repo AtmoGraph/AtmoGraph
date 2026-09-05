@@ -34,6 +34,7 @@ jobs:
           cache-dependency-path: backend/requirements.txt
       - run: python -m pip install --upgrade pip
       - run: python -m pip install -r backend/requirements.txt
+      - run: python -m spacy download en_core_web_sm
       - name: Wait for Neo4j
         run: |
           python - <<'PY'
