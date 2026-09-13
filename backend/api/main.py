@@ -22,7 +22,12 @@ except (ImportError, OSError) as exc:
     print(f"NLP routes disabled: {exc}")
 
 from backend.api.auth import router as auth_router, user_from_request
-from backend.api.realtime import router as realtime_router
+
+try:
+    from backend.api.realtime import router as realtime_router
+except (ImportError, OSError, AttributeError) as exc:
+    realtime_router = None
+    print(f"Realtime/GNN routes disabled: {exc}")
 
 app = FastAPI(
     title="AtmoGraph Backend API",
@@ -31,8 +36,11 @@ app = FastAPI(
 
 if nlp_router is not None:
     app.include_router(nlp_router)
+
 app.include_router(auth_router)
-app.include_router(realtime_router)
+
+if realtime_router is not None:
+    app.include_router(realtime_router)
 
 @app.middleware("http")
 async def protect_api(request: Request, call_next):
@@ -48,13 +56,12 @@ async def protect_api(request: Request, call_next):
 # React frontend
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=[
-        "http://localhost:5174",
-    ],
+    allow_origins=["http://localhost:5174"],
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
 )
+
 
 @app.post("/api/predictions")
 def get_predictions(request: dict):
