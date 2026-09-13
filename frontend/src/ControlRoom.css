@@ -476,3 +476,81 @@ body {
     min-height: 0;
   }
 }
+
+/* Place topology in the same grid area as the map. */
+.network-panel > .topology-wrap {
+  grid-area: map;
+  position: relative;
+  width: 100%;
+  min-width: 0;
+  min-height: 690px;
+  height: 100%;
+  padding-top: 72px;
+  overflow: hidden;
+  border: 1px solid var(--control-border);
+  border-radius: 12px;
+  background: var(--control-surface);
+}
+
+.network-panel .topology-graph {
+  display: block;
+  width: 100%;
+  height: 100%;
+  min-height: 540px;
+}
+
+.network-panel .topology-legend {
+  position: absolute;
+  bottom: 14px;
+  left: 50%;
+  width: max-content;
+  max-width: calc(100% - 24px);
+  transform: translateX(-50%);
+}
+
+@media (max-width: 760px) {
+  .network-panel > .topology-wrap {
+    height: 560px;
+    min-height: 560px;
+  }
+
+  .network-panel .topology-graph {
+    min-height: 0;
+  }
+}
+
+.network-panel .topology-controls {
+  position: absolute;
+  top: 86px;
+  left: 16px;
+  z-index: 5;
+  display: flex;
+  gap: 6px;
+}
+
+.topology-controls button {
+  min-width: 40px;
+  height: 40px;
+  padding: 0 12px;
+  border: 1px solid var(--control-border);
+  border-radius: 8px;
+  background: var(--control-surface);
+  color: var(--control-text, #dcecff);
+  font: inherit;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.topology-controls button:hover:not(:disabled) {
+  background: #173a55;
+}
+
+.topology-controls button:focus-visible {
+  outline: 2px solid #59cfff;
+  outline-offset: 2px;
+}
+
+.topology-controls button:disabled {
+  opacity: 0.45;
+  cursor: default;
+}

@@ -40,6 +40,8 @@ function TopologyGraph({
 
   const [tick, setTick] = useState(0);
 
+  const [zoom, setZoom] = useState(1);
+
   useEffect(() => {
     if (!graph.nodes.length) return undefined;
 
@@ -69,9 +71,32 @@ function TopologyGraph({
 
   return (
     <div className="topology-wrap">
+    <div className="topology-controls" aria-label="Topology zoom controls">
+  <button
+    type="button"
+    onClick={() => setZoom((value) => Math.min(2.5, value + 0.15))}
+    disabled={zoom >= 2.5}
+    aria-label="Zoom in"
+  >
+    +
+  </button>
+  <button
+    type="button"
+    onClick={() => setZoom((value) => Math.max(0.4, value - 0.15))}
+    disabled={zoom <= 0.4}
+    aria-label="Zoom out"
+  >
+    -
+  </button>
+  <button type="button" onClick={() => setZoom(1)}>
+    Reset
+  </button>
+</div>
       <svg
         className="topology-graph"
-        viewBox={`0 0 ${WIDTH} ${HEIGHT}`}
+        viewBox={`${(WIDTH - WIDTH / zoom) / 2} ${
+        (HEIGHT - HEIGHT / zoom) / 2
+        } ${WIDTH / zoom} ${HEIGHT / zoom}`}
         role="img"
         aria-label="Force-directed supply chain topology"
       >
