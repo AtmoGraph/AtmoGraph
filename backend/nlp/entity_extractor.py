@@ -2,6 +2,46 @@ from functools import lru_cache
 
 import spacy
 
+from backend.python.canonical_gnn_graph import load_canonical_gnn_graph
+
+def build_supply_chain_patterns():
+    nodes, _ = load_canonical_gnn_graph()
+
+    canonical_patterns = [
+        {
+            "label": "SUPPLY_CHAIN_ENTITY",
+            "pattern": node["properties"]["name"],
+            "id": node["properties"]["id"],
+        }
+        for node in nodes
+    ]
+
+    canonical_patterns.extend([
+        {
+            "label": "SUPPLY_CHAIN_ENTITY",
+            "pattern": "Port of Rotterdam",
+            "id": "PORT003",
+        },
+        {
+            "label": "SUPPLY_CHAIN_ENTITY",
+            "pattern": "Rotterdam Port",
+            "id": "PORT003",
+        },
+    ])
+
+    canonical_names = {
+        item["pattern"].casefold()
+        for item in canonical_patterns
+    }
+
+    legacy_patterns = [
+        item
+        for item in SUPPLY_CHAIN_PATTERNS
+        if item["pattern"].casefold() not in canonical_names
+    ]
+
+    return legacy_patterns + canonical_patterns
+
 
 SUPPLY_CHAIN_PATTERNS = [
     {
@@ -66,7 +106,7 @@ def get_nlp():
         before="ner",
         config={"overwrite_ents": True},
     )
-    ruler.add_patterns(SUPPLY_CHAIN_PATTERNS)
+    ruler.add_patterns(build_supply_chain_patterns())
 
     return nlp
 

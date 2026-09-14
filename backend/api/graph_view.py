@@ -5,11 +5,13 @@ from collections import Counter
 
 GENERIC_LABELS = {"SupplyChainNode"}
 OPERATIONAL_RELATIONSHIPS = {
+    "SUPPLIES",
+    "SHIPS_TO",
+    "SERVES",
     "USES_PORT",
     "PRODUCES",
     "FROM",
     "TO",
-    "SERVES",
     "DISTRIBUTES_TO",
 }
 
