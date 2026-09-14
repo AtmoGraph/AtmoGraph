@@ -4,7 +4,16 @@ from collections import Counter
 
 
 GENERIC_LABELS = {"SupplyChainNode"}
-OPERATIONAL_RELATIONSHIPS = {"SUPPLIES", "SHIPS_TO", "SERVES"}
+OPERATIONAL_RELATIONSHIPS = {
+    "SUPPLIES",
+    "SHIPS_TO",
+    "SERVES",
+    "USES_PORT",
+    "PRODUCES",
+    "FROM",
+    "TO",
+    "DISTRIBUTES_TO",
+}
 
 
 def specific_node_type(labels):

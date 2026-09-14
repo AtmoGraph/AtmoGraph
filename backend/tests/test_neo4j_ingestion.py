@@ -8,12 +8,12 @@ from backend.python.db import Neo4jConnection
 
 TEST_TEXT = (
     "A labour action at the Port of Rotterdam is delaying "
-    "shipments from Nordic Minerals. Mid-project review case."
+    "shipments from Foxconn. Canonical-network ingestion review case."
 )
 
 EXPECTED_NODE_IDS = {
-    "port-rotterdam",
-    "supplier-sweden",
+    "PORT003",
+    "MAN004",
 }
 
 

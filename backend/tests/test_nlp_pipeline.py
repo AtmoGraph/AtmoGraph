@@ -1,4 +1,4 @@
-import pytest
+﻿import pytest
 from fastapi.testclient import TestClient
 
 from backend.api.main import app
@@ -24,7 +24,7 @@ def test_extracts_known_supply_chain_entities():
     }
 
     assert canonical_ids == {
-        "port-rotterdam",
+        "PORT003",
         "supplier-sweden",
         "market-europe",
     }
@@ -101,7 +101,7 @@ def test_analyze_endpoint(tmp_path, monkeypatch):
     assert payload["classification"]["type"] == "labour_strike"
     assert payload["classification"]["risk_level"] == "high"
     assert payload["affected_node_ids"] == [
-        "port-rotterdam",
+        "PORT003",
         "supplier-sweden",
         "market-europe",
     ]

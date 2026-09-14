@@ -1,89 +1,67 @@
+from backend.python.canonical_gnn_graph import load_canonical_gnn_graph
 from backend.python.db import Neo4jConnection
 
 
-NODES = [
-    {
-        "label": "Supplier",
-        "id": "supplier-sweden",
-        "name": "Nordic Minerals",
-        "location": "Kiruna, Sweden",
-        "risk": "medium",
-        "risk_score": 0.5,
-        "capacity": 82,
-        "aliases": ["Nordic Minerals", "Nordic Metals"],
-    },
-    {
-        "label": "Port",
-        "id": "port-rotterdam",
-        "name": "Port of Rotterdam",
-        "location": "Rotterdam, Netherlands",
-        "risk": "high",
-        "risk_score": 0.9,
-        "capacity": 54,
-        "aliases": ["Port of Rotterdam", "Rotterdam Port", "Rotterdam"],
-    },
-    {
-        "label": "Supplier",
-        "id": "supplier-taiwan",
-        "name": "Silica Systems",
-        "location": "Hsinchu, Taiwan",
-        "risk": "low",
-        "risk_score": 0.2,
-        "capacity": 94,
-        "aliases": ["Silica Systems"],
-    },
-    {
-        "label": "Factory",
-        "id": "factory-india",
-        "name": "Atlas Assembly",
-        "location": "Pune, India",
-        "risk": "medium",
-        "risk_score": 0.5,
-        "capacity": 76,
-        "aliases": ["Atlas Assembly"],
-    },
-    {
-        "label": "Port",
-        "id": "port-singapore",
-        "name": "Port of Singapore",
-        "location": "Singapore",
-        "risk": "low",
-        "risk_score": 0.2,
-        "capacity": 91,
-        "aliases": ["Port of Singapore", "Singapore Port"],
-    },
-    {
-        "label": "DistributionCentre",
-        "id": "distribution-usa",
-        "name": "North America DC",
-        "location": "Chicago, USA",
-        "risk": "medium",
-        "risk_score": 0.5,
-        "capacity": 73,
-        "aliases": ["North America DC", "Chicago Distribution Centre"],
-    },
-    {
-        "label": "Market",
-        "id": "market-europe",
-        "name": "European Market",
-        "location": "Berlin, Germany",
-        "risk": "high",
-        "risk_score": 0.9,
-        "capacity": 61,
-        "aliases": ["European Market"],
-    },
-]
+ALLOWED_LABELS = {
+    "Port",
+    "Manufacturer",
+    "Product",
+    "Warehouse",
+    "Market",
+    "ShippingRoute",
+}
+
+ALLOWED_RELATIONSHIP_TYPES = {
+    "USES_PORT",
+    "PRODUCES",
+    "FROM",
+    "TO",
+    "SERVES",
+    "DISTRIBUTES_TO",
+}
 
 
-RELATIONSHIPS = [
-    ("supplier-sweden", "SUPPLIES", "port-rotterdam"),
-    ("port-rotterdam", "SHIPS_TO", "factory-india"),
-    ("supplier-taiwan", "SUPPLIES", "factory-india"),
-    ("factory-india", "SHIPS_TO", "port-singapore"),
-    ("factory-india", "SERVES", "market-europe"),
-    ("port-singapore", "SHIPS_TO", "distribution-usa"),
-    ("port-rotterdam", "SERVES", "market-europe"),
-]
+def risk_label(score):
+    if score >= 0.7:
+        return "high"
+    if score >= 0.4:
+        return "medium"
+    return "low"
+
+
+def load_seed_data():
+    canonical_nodes, canonical_relationships = load_canonical_gnn_graph()
+
+    nodes = []
+
+    for item in canonical_nodes:
+        label = item["labels"][0]
+        properties = dict(item["properties"])
+        score = float(properties.get("risk_score", 0.2))
+
+        properties.setdefault("risk_score", score)
+        properties.setdefault("risk", risk_label(score))
+        properties.setdefault(
+            "capacity",
+            properties.get("production_capacity", 100),
+        )
+        properties.setdefault("aliases", [properties["name"]])
+
+        nodes.append({
+            "label": label,
+            **properties,
+        })
+
+    relationships = [
+        (
+            relationship["source_neo4j_id"],
+            relationship["relationship_type"],
+            relationship["target_neo4j_id"],
+        )
+        for relationship in canonical_relationships
+    ]
+
+    return nodes, relationships
 
 
 def create_constraints(session):
@@ -95,20 +73,11 @@ def create_constraints(session):
         """
     )
 
-
-def create_nodes(session):
-    allowed_labels = {
-        "Supplier",
-        "Port",
-        "Factory",
-        "DistributionCentre",
-        "Market",
-    }
-
-    for node in NODES:
+def create_nodes(session, nodes):
+    for node in nodes:
         label = node["label"]
 
-        if label not in allowed_labels:
+        if label not in ALLOWED_LABELS:
             raise ValueError(f"Unsupported node label: {label}")
 
         properties = {
@@ -127,11 +96,9 @@ def create_nodes(session):
         )
 
 
-def create_relationships(session):
-    allowed_types = {"SUPPLIES", "SHIPS_TO", "SERVES"}
-
-    for source_id, relationship_type, target_id in RELATIONSHIPS:
-        if relationship_type not in allowed_types:
+def create_relationships(session, relationships):
+    for source_id, relationship_type, target_id in relationships:
+        if relationship_type not in ALLOWED_RELATIONSHIP_TYPES:
             raise ValueError(
                 f"Unsupported relationship type: {relationship_type}"
             )
@@ -148,19 +115,21 @@ def create_relationships(session):
 
 
 def main():
+    nodes, relationships = load_seed_data()
     db = Neo4jConnection()
 
     try:
         with db.driver.session(database="neo4j") as session:
             create_constraints(session)
-            create_nodes(session)
-            create_relationships(session)
+            create_nodes(session, nodes)
+            create_relationships(session, relationships)
 
             result = session.run(
                 """
                 MATCH (node:SupplyChainNode)
                 WITH count(node) AS nodes
-                OPTIONAL MATCH (:SupplyChainNode)-[relationship]->(:SupplyChainNode)
+                OPTIONAL MATCH
+                  (:SupplyChainNode)-[relationship]->(:SupplyChainNode)
                 RETURN nodes, count(relationship) AS relationships
                 """
             )
@@ -168,7 +137,7 @@ def main():
             summary = result.single()
 
             print(
-                f"Graph seeded successfully: "
+                "Graph seeded successfully: "
                 f"{summary['nodes']} nodes, "
                 f"{summary['relationships']} relationships"
             )

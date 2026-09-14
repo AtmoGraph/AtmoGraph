@@ -84,7 +84,7 @@ function App() {
   const [lastRealtimeEvent, setLastRealtimeEvent] = useState(null);
   const [predictionScenario, setPredictionScenario] = useState(null);
   const [livePublishing, setLivePublishing] = useState(false);
-  const [networkView, setNetworkView] = useState("map");
+  const [networkView, setNetworkView] = useState("topology");
   const [signalTab, setSignalTab] = useState("news");
   const [newsArticles, setNewsArticles] = useState([]);
   const [newsLoading, setNewsLoading] = useState(false);
@@ -141,12 +141,16 @@ const overlayNetworkNodes = useMemo(
 
   const exposureData = useMemo(() => {
     const labels = {
-      Port: "Ports",
-      Supplier: "Suppliers",
-      Factory: "Factories",
-      DistributionCentre: "Distribution centres",
-      Market: "Markets",
-    };
+  Port: "Ports",
+  Manufacturer: "Manufacturers",
+  Product: "Products",
+  Warehouse: "Warehouses",
+  Market: "Markets",
+  ShippingRoute: "Shipping routes",
+  Supplier: "Suppliers",
+  Factory: "Factories",
+  DistributionCentre: "Distribution centres",
+};
     const entries = Object.entries(graphSummary?.node_types || {})
       .filter(([type]) => labels[type])
       .map(([type, count]) => ({
