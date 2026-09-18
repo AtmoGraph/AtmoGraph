@@ -2,7 +2,10 @@ import csv
 
 from backend.python.canonical_gnn_graph import load_canonical_gnn_graph
 from backend.python.config import FULL_RIPPLE_DATASET
-
+from backend.python.canonical_gnn_graph import (
+    PORT_COORDINATES,
+    load_canonical_gnn_graph,
+)
 
 def test_canonical_graph_contains_every_dataset_node_id():
     nodes, relationships = load_canonical_gnn_graph()
@@ -34,3 +37,20 @@ def test_canonical_graph_is_deterministic():
 
     assert first == second
 
+def test_every_operational_port_has_valid_coordinates():
+    nodes, _ = load_canonical_gnn_graph()
+    ports = [
+        node for node in nodes
+        if "Port" in node["labels"]
+    ]
+
+    assert {
+        node["properties"]["id"] for node in ports
+    } == set(PORT_COORDINATES)
+
+    for port in ports:
+        latitude = port["properties"]["latitude"]
+        longitude = port["properties"]["longitude"]
+
+        assert -90 <= latitude <= 90
+        assert -180 <= longitude <= 180

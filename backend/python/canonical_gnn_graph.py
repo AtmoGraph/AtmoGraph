@@ -17,6 +17,15 @@ PORT_ORIGINS = {
     "Hamburg": ("PORT004", "Hamburg Port"),
 }
 
+PORT_COORDINATES = {
+    "PORT001": {"latitude": 25.15, "longitude": 121.50},
+    "PORT002": {"latitude": 31.40, "longitude": 121.50},
+    "PORT003": {"latitude": 51.95, "longitude": 4.14},
+    "PORT004": {"latitude": 53.54, "longitude": 9.97},
+    "PORT005": {"latitude": 33.74, "longitude": -118.26},
+    "PORT006": {"latitude": 49.29, "longitude": -123.10},
+}
+
 MANUFACTURER_ORIGINS = {
     "MAN001": "PORT001",
     "MAN002": "PORT002",
@@ -68,6 +77,7 @@ def _port_properties():
                     "name": row["port_name"],
                     "risk_score": float(row["port_risk"]),
                     "congestion_level": float(row["port_congestion"]),
+                    **PORT_COORDINATES[row["port_id"]],
                 },
             )
     return properties

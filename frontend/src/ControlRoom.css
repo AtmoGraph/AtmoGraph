@@ -264,7 +264,39 @@ body {
 .geo-countries .geo-country:hover { fill: #415d74 !important; }
 .geo-grid path { fill: none; stroke: rgba(112, 164, 200, .08); stroke-width: 1; }
 .geo-route { fill: none; stroke: rgba(139, 204, 241, .54); stroke-width: 1.35; vector-effect: non-scaling-stroke; }
-.geo-route:nth-child(3n) { stroke: rgba(255, 106, 106, .68); }
+.geo-reference-port {
+  color: #91a9bb;
+  outline: none;
+}
+
+.geo-reference-port circle {
+  fill: #0b1d2e;
+  stroke: currentColor;
+  stroke-width: 1.2;
+  vector-effect: non-scaling-stroke;
+}
+
+.geo-reference-port text {
+  visibility: hidden;
+  fill: #d5e4ee;
+  font-size: 9px;
+  font-weight: 650;
+  paint-order: stroke;
+  stroke: #081727;
+  stroke-width: 3px;
+  stroke-linejoin: round;
+  pointer-events: none;
+}
+
+.geo-reference-port:hover circle,
+.geo-reference-port:focus circle {
+  fill: currentColor;
+}
+
+.geo-reference-port:hover text,
+.geo-reference-port:focus text {
+  visibility: visible;
+}
 .geo-node { cursor: pointer; outline: none; }
 .geo-node .node-pulse { fill: currentColor; opacity: .18; stroke: currentColor; stroke-width: 1; }
 .geo-node .node-core { fill: currentColor; stroke: #e9fbff; stroke-width: 1.2; }
@@ -279,6 +311,19 @@ body {
 .geo-controls button:hover { border-color: var(--control-cyan); background: rgba(27, 69, 98, .96); }
 .geo-legend { position: absolute; z-index: 6; bottom: 14px; left: 50%; display: flex; gap: 18px; padding: 8px 13px; border: 1px solid var(--control-border); border-radius: 8px; color: var(--control-muted); background: rgba(5, 18, 33, .88); transform: translateX(-50%); font-size: .65rem; }
 .geo-legend span::before { content: ""; display: inline-block; width: 7px; height: 7px; margin-right: 6px; border-radius: 50%; background: #68c9ff; }
+.geo-legend .reference::before {
+  box-sizing: border-box;
+  border: 1px solid #91a9bb;
+  background: transparent;
+}
+
+.geo-legend .route::before {
+  width: 14px;
+  height: 2px;
+  border-radius: 0;
+  background: rgba(139, 204, 241, .8);
+  vertical-align: middle;
+}
 .geo-legend .watch::before { background: #ffad42; }
 .geo-legend .critical::before { background: #ff6767; }
 
