@@ -20,11 +20,42 @@ const countries = feature(world, world.objects.countries).features;
 function project(coordinates) { return projection(coordinates) || [500, 260]; }
 function endpointId(endpoint) { return typeof endpoint === "object" ? endpoint.id : endpoint; }
 function nodePoint(node, index, total) {
-  const text = `${node.name || ""} ${node.location || ""} ${node.country || ""}`.toLowerCase();
-  const match = Object.entries(LOCATION_COORDS).find(([key]) => text.includes(key));
+  const properties = node.properties || {};
+  const latitudeValue = node.latitude ?? properties.latitude;
+  const longitudeValue = node.longitude ?? properties.longitude;
+  const latitude = Number(latitudeValue);
+  const longitude = Number(longitudeValue);
+
+  if (
+    latitudeValue !== undefined &&
+    latitudeValue !== null &&
+    longitudeValue !== undefined &&
+    longitudeValue !== null &&
+    Number.isFinite(latitude) &&
+    Number.isFinite(longitude)
+  ) {
+    return project([longitude, latitude]);
+  }
+
+  const text = `
+    ${node.name || ""}
+    ${node.location || properties.location || ""}
+    ${node.country || properties.country || ""}
+  `.toLowerCase();
+
+  const match = Object.entries(LOCATION_COORDS).find(([key]) =>
+    text.includes(key)
+  );
+
   if (match) return project(match[1]);
-  const angle = (index / Math.max(total, 1)) * Math.PI * 2 - Math.PI / 2;
-  return [500 + Math.cos(angle) * 275, 250 + Math.sin(angle) * 145];
+
+  const angle =
+    (index / Math.max(total, 1)) * Math.PI * 2 - Math.PI / 2;
+
+  return [
+    500 + Math.cos(angle) * 275,
+    250 + Math.sin(angle) * 145,
+  ];
 }
 
 export default function NetworkGraph({ networkNodes = [], networkEdges = [], selectedNode, onSelectNode }) {
@@ -54,7 +85,12 @@ export default function NetworkGraph({ networkNodes = [], networkEdges = [], sel
           })}</g>
           <g>{networkNodes.map((node) => {
             const [x, y] = points.get(node.id);
-            const risk = String(node.predictionRisk || node.risk || "low").toLowerCase();
+            const risk = String(
+  node.predictionRisk ||
+  node.properties?.risk ||
+  node.risk ||
+  "low"
+).toLowerCase();
             const selected = selectedNode?.id === node.id;
             const select = () => onSelectNode?.(node);
             return <g className={`geo-node ${risk}${selected ? " selected" : ""}`} key={node.id} transform={`translate(${x} ${y})`} onClick={select} role="button" tabIndex="0" onKeyDown={(event) => { if (event.key === "Enter" || event.key === " ") select(); }}><circle className="node-pulse" r={selected ? 18 : 13}/><circle className="node-core" r={selected ? 7 : 5} filter="url(#nodeGlow)"/><text x="10" y="-9">{node.name || node.location || node.id}</text></g>;
