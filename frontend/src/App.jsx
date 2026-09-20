@@ -68,6 +68,7 @@ function formatDisruptionTime(disruption) {
 function App() {
   const { user, logout } = useAuth();
   const [accountMenuOpen, setAccountMenuOpen] = useState(false);
+  const [notificationMenuOpen, setNotificationMenuOpen] = useState(false);
   const [networkNodes, setNetworkNodes] = useState([]);
   const [networkEdges, setNetworkEdges] = useState([]);
   const [graphSummary, setGraphSummary] = useState(null);
@@ -90,6 +91,7 @@ function App() {
   const [newsLoading, setNewsLoading] = useState(false);
   const [newsError, setNewsError] = useState("");
   const [ingestingArticle, setIngestingArticle] = useState("");
+  const notificationMenuRef = useRef(null);
   const latestEventId = useRef(0);
 
   const predictionByNodeId = useMemo(
@@ -166,6 +168,50 @@ const overlayNetworkNodes = useMemo(
       percentage: (item.count / maximum) * 100,
     }));
   }, [graphSummary]);
+
+  const notificationItems = useMemo(() => {
+    const items = disruptions.slice(0, 5).map((disruption, index) => ({
+      id: disruption.id || `disruption-${index}`,
+      level:
+        Number(disruption.severity) >= 0.8 ? "critical" : "warning",
+      title: disruption.name || "Supply-chain disruption",
+      detail: [
+        disruption.type?.replaceAll("_", " "),
+        disruption.port_name,
+      ]
+        .filter(Boolean)
+        .join(" · "),
+    }));
+
+    if (realtimeStatus !== "live") {
+      items.unshift({
+        id: "realtime-status",
+        level: "warning",
+        title: "Live updates are reconnecting",
+        detail: "Real-time events will resume automatically.",
+      });
+    }
+
+    if (disruptionsError) {
+      items.unshift({
+        id: "disruptions-error",
+        level: "critical",
+        title: "Disruption feed unavailable",
+        detail: disruptionsError,
+      });
+    }
+
+    if (predictionError) {
+      items.unshift({
+        id: "prediction-error",
+        level: "critical",
+        title: "Prediction service unavailable",
+        detail: predictionError,
+      });
+    }
+
+    return items;
+  }, [disruptions, disruptionsError, predictionError, realtimeStatus]);
 
   const networkHealth =
     activeNodes > 0 ? "Operational" : "Unavailable";
@@ -464,6 +510,32 @@ const overlayNetworkNodes = useMemo(
     previewHorizon,
   ]);
 
+  useEffect(() => {
+    if (!notificationMenuOpen) {
+      return undefined;
+    }
+
+    const handlePointerDown = (event) => {
+      if (!notificationMenuRef.current?.contains(event.target)) {
+        setNotificationMenuOpen(false);
+      }
+    };
+
+    const handleKeyDown = (event) => {
+      if (event.key === "Escape") {
+        setNotificationMenuOpen(false);
+      }
+    };
+
+    document.addEventListener("pointerdown", handlePointerDown);
+    document.addEventListener("keydown", handleKeyDown);
+
+    return () => {
+      document.removeEventListener("pointerdown", handlePointerDown);
+      document.removeEventListener("keydown", handleKeyDown);
+    };
+  }, [notificationMenuOpen]);
+
   const publishLiveScenario = async () => {
     try {
       setLivePublishing(true);
@@ -579,10 +651,83 @@ const overlayNetworkNodes = useMemo(
             />
           </label>
 
-          <button className="notification-button" aria-label="Notifications">
-            <Bell size={17} />
-            <span />
-          </button>
+          <div className="notification-menu-wrap" ref={notificationMenuRef}>
+            <button
+              className="notification-button"
+              type="button"
+              aria-label={`Notifications (${notificationItems.length})`}
+              aria-expanded={notificationMenuOpen}
+              aria-controls="notification-menu"
+              aria-haspopup="dialog"
+              onClick={() => {
+                setNotificationMenuOpen((open) => !open);
+                setAccountMenuOpen(false);
+              }}
+            >
+              <Bell size={17} />
+              {notificationItems.length > 0 && (
+                <span className="notification-badge">
+                  {notificationItems.length > 9
+                    ? "9+"
+                    : notificationItems.length}
+                </span>
+              )}
+            </button>
+
+            {notificationMenuOpen && (
+              <section
+                className="notification-menu"
+                id="notification-menu"
+                role="dialog"
+                aria-label="Notifications"
+              >
+                <div className="notification-menu-heading">
+                  <div>
+                    <strong>Notifications</strong>
+                    <small>Live operational alerts</small>
+                  </div>
+                  <span>{notificationItems.length} active</span>
+                </div>
+
+                <div className="notification-list">
+                  {notificationItems.length === 0 ? (
+                    <div className="notification-empty">
+                      <Bell size={18} />
+                      <strong>No active notifications</strong>
+                      <span>The network is currently stable.</span>
+                    </div>
+                  ) : (
+                    notificationItems.map((item) => (
+                      <article
+                        className={`notification-item ${item.level}`}
+                        key={item.id}
+                      >
+                        <span className="notification-item-dot" />
+                        <div>
+                          <strong>{item.title}</strong>
+                          <small>{item.detail}</small>
+                        </div>
+                      </article>
+                    ))
+                  )}
+                </div>
+
+                <button
+                  className="notification-view-all"
+                  type="button"
+                  onClick={() => {
+                    setNotificationMenuOpen(false);
+                    setSignalTab("disruptions");
+                    document
+                      .getElementById("disruptions")
+                      ?.scrollIntoView({ behavior: "smooth" });
+                  }}
+                >
+                  View disruptions
+                </button>
+              </section>
+            )}
+          </div>
 
           <div className="timeline-control" aria-label="Prediction horizon preview">
             <div className="timeline-control-heading">
