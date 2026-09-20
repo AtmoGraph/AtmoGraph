@@ -1,6 +1,5 @@
 import csv
 
-from backend.python.canonical_gnn_graph import load_canonical_gnn_graph
 from backend.python.config import FULL_RIPPLE_DATASET
 from backend.python.canonical_gnn_graph import (
     PORT_COORDINATES,
